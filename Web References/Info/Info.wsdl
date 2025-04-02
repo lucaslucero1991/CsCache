@@ -1,0 +1,2055 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://tempuri.org/CSwsInfo/Info" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org/CSwsInfo/Info" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/CSwsInfo/Info">
+      <s:element name="Version">
+        <s:complexType />
+      </s:element>
+      <s:element name="VersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="VersionResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TheatreGroups">
+        <s:complexType />
+      </s:element>
+      <s:element name="TheatreGroupsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TheatreGroupsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGenresImages">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGenresImagesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGenresImagesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGenres">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGenresResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGenresResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRatingsImages">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRatingsImagesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRatingsImagesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRatings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRatingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRatingsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPosterExtension">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPosterExtensionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPosterExtensionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPosterRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPosterRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsPosterRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPosterByRes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Resolution" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPosterByResResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPosterByResResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPoster">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPosterResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPosterResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrailerExtension">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrailerExtensionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTrailerExtensionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsTrailerRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsTrailerRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsTrailerRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrailer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTrailerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTrailerResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ATMSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ATMSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ATMSettingsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Ranking">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="count" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RankingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RankingResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Movies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MoviesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MoviesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MovieDetail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MovieDetailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MovieDetailResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Moviesv2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Moviesv2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Moviesv2Result">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MovieDetailv2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MovieDetailv2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MovieDetailv2Result">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTimeByDateResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateTOSTRING">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateTOSTRINGResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTimeByDateTOSTRINGResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateAndMovie">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateAndMovieResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTimeByDateAndMovieResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WeeklyShowTime">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WeeklyShowTimeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WeeklyShowTimeResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WeeklyShowTimeByMovie">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WeeklyShowTimeByMovieResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WeeklyShowTimeByMovieResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateAndMovieAndStartTime">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="FeatureId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="StartTime" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ShowTimeByDateAndMovieAndStartTimeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ShowTimeByDateAndMovieAndStartTimeResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProducts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductsByKeyLayout">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="WorkstationId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="KeyLayoutId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductsByKeyLayoutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductsByKeyLayoutResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetKeyLayouts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="WorkstationID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="FilterID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetKeyLayoutsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetKeyLayoutsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductImage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ProductID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductImageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductImageResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsProductImageRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ProductID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsProductImageRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsProductImageRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductVideo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ProductID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProductVideoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProductVideoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsProductVideoRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ProductID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsProductVideoRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsProductVideoRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsGenresImagesRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsGenresImagesRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsGenresImagesRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsRatingsImagesRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsRatingsImagesRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsRatingsImagesRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsScreenTypeImagesRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ScreenID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsScreenTypeImagesRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsScreenTypeImagesRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetScreenTypeImage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ScreenID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetScreenTypeImageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetScreenTypeImageResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetKLImage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="KeyLayoutID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetKLImageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetKLImageResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsKLImageRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="KeyLayoutID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsKLImageRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsKLImageRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsDistriImageRequired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="DistributionID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="DateCreated" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Hour" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsDistriImageRequiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsDistriImageRequiredResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDistriImage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="DistributionID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDistriImageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDistriImageResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDistriImageInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="DistributionID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDistriImageInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDistriImageInfoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InfoWeeklyShowTime">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="SDate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InfoWeeklyShowTimeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InfoWeeklyShowTimeResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ComplexInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="TheatreGroupId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ComplexInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ComplexInfoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="VersionSoapIn">
+    <wsdl:part name="parameters" element="tns:Version" />
+  </wsdl:message>
+  <wsdl:message name="VersionSoapOut">
+    <wsdl:part name="parameters" element="tns:VersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="TheatreGroupsSoapIn">
+    <wsdl:part name="parameters" element="tns:TheatreGroups" />
+  </wsdl:message>
+  <wsdl:message name="TheatreGroupsSoapOut">
+    <wsdl:part name="parameters" element="tns:TheatreGroupsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGenresImagesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGenresImages" />
+  </wsdl:message>
+  <wsdl:message name="GetGenresImagesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGenresImagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGenresSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGenres" />
+  </wsdl:message>
+  <wsdl:message name="GetGenresSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGenresResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRatingsImagesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRatingsImages" />
+  </wsdl:message>
+  <wsdl:message name="GetRatingsImagesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRatingsImagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRatingsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRatings" />
+  </wsdl:message>
+  <wsdl:message name="GetRatingsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRatingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterExtensionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPosterExtension" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterExtensionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPosterExtensionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsPosterRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsPosterRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsPosterRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsPosterRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterByResSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPosterByRes" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterByResSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPosterByResResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPoster" />
+  </wsdl:message>
+  <wsdl:message name="GetPosterSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPosterResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTrailerExtensionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTrailerExtension" />
+  </wsdl:message>
+  <wsdl:message name="GetTrailerExtensionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTrailerExtensionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsTrailerRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsTrailerRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsTrailerRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsTrailerRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTrailerSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTrailer" />
+  </wsdl:message>
+  <wsdl:message name="GetTrailerSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTrailerResponse" />
+  </wsdl:message>
+  <wsdl:message name="ATMSettingsSoapIn">
+    <wsdl:part name="parameters" element="tns:ATMSettings" />
+  </wsdl:message>
+  <wsdl:message name="ATMSettingsSoapOut">
+    <wsdl:part name="parameters" element="tns:ATMSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="RankingSoapIn">
+    <wsdl:part name="parameters" element="tns:Ranking" />
+  </wsdl:message>
+  <wsdl:message name="RankingSoapOut">
+    <wsdl:part name="parameters" element="tns:RankingResponse" />
+  </wsdl:message>
+  <wsdl:message name="MoviesSoapIn">
+    <wsdl:part name="parameters" element="tns:Movies" />
+  </wsdl:message>
+  <wsdl:message name="MoviesSoapOut">
+    <wsdl:part name="parameters" element="tns:MoviesResponse" />
+  </wsdl:message>
+  <wsdl:message name="MovieDetailSoapIn">
+    <wsdl:part name="parameters" element="tns:MovieDetail" />
+  </wsdl:message>
+  <wsdl:message name="MovieDetailSoapOut">
+    <wsdl:part name="parameters" element="tns:MovieDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="Moviesv2SoapIn">
+    <wsdl:part name="parameters" element="tns:Moviesv2" />
+  </wsdl:message>
+  <wsdl:message name="Moviesv2SoapOut">
+    <wsdl:part name="parameters" element="tns:Moviesv2Response" />
+  </wsdl:message>
+  <wsdl:message name="MovieDetailv2SoapIn">
+    <wsdl:part name="parameters" element="tns:MovieDetailv2" />
+  </wsdl:message>
+  <wsdl:message name="MovieDetailv2SoapOut">
+    <wsdl:part name="parameters" element="tns:MovieDetailv2Response" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDate" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateTOSTRINGSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateTOSTRING" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateTOSTRINGSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateTOSTRINGResponse" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateAndMovieSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateAndMovie" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateAndMovieSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateAndMovieResponse" />
+  </wsdl:message>
+  <wsdl:message name="WeeklyShowTimeSoapIn">
+    <wsdl:part name="parameters" element="tns:WeeklyShowTime" />
+  </wsdl:message>
+  <wsdl:message name="WeeklyShowTimeSoapOut">
+    <wsdl:part name="parameters" element="tns:WeeklyShowTimeResponse" />
+  </wsdl:message>
+  <wsdl:message name="WeeklyShowTimeByMovieSoapIn">
+    <wsdl:part name="parameters" element="tns:WeeklyShowTimeByMovie" />
+  </wsdl:message>
+  <wsdl:message name="WeeklyShowTimeByMovieSoapOut">
+    <wsdl:part name="parameters" element="tns:WeeklyShowTimeByMovieResponse" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateAndMovieAndStartTimeSoapIn">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateAndMovieAndStartTime" />
+  </wsdl:message>
+  <wsdl:message name="ShowTimeByDateAndMovieAndStartTimeSoapOut">
+    <wsdl:part name="parameters" element="tns:ShowTimeByDateAndMovieAndStartTimeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProducts" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsByKeyLayoutSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProductsByKeyLayout" />
+  </wsdl:message>
+  <wsdl:message name="GetProductsByKeyLayoutSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductsByKeyLayoutResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetKeyLayoutsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetKeyLayouts" />
+  </wsdl:message>
+  <wsdl:message name="GetKeyLayoutsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetKeyLayoutsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductImageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProductImage" />
+  </wsdl:message>
+  <wsdl:message name="GetProductImageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsProductImageRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsProductImageRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsProductImageRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsProductImageRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProductVideoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProductVideo" />
+  </wsdl:message>
+  <wsdl:message name="GetProductVideoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProductVideoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsProductVideoRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsProductVideoRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsProductVideoRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsProductVideoRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsGenresImagesRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsGenresImagesRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsGenresImagesRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsGenresImagesRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsRatingsImagesRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsRatingsImagesRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsRatingsImagesRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsRatingsImagesRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsScreenTypeImagesRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsScreenTypeImagesRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsScreenTypeImagesRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsScreenTypeImagesRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetScreenTypeImageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetScreenTypeImage" />
+  </wsdl:message>
+  <wsdl:message name="GetScreenTypeImageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetScreenTypeImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetKLImageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetKLImage" />
+  </wsdl:message>
+  <wsdl:message name="GetKLImageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetKLImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsKLImageRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsKLImageRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsKLImageRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsKLImageRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsDistriImageRequiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsDistriImageRequired" />
+  </wsdl:message>
+  <wsdl:message name="IsDistriImageRequiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsDistriImageRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDistriImageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDistriImage" />
+  </wsdl:message>
+  <wsdl:message name="GetDistriImageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDistriImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDistriImageInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDistriImageInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetDistriImageInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDistriImageInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="InfoWeeklyShowTimeSoapIn">
+    <wsdl:part name="parameters" element="tns:InfoWeeklyShowTime" />
+  </wsdl:message>
+  <wsdl:message name="InfoWeeklyShowTimeSoapOut">
+    <wsdl:part name="parameters" element="tns:InfoWeeklyShowTimeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ComplexInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:ComplexInfo" />
+  </wsdl:message>
+  <wsdl:message name="ComplexInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:ComplexInfoResponse" />
+  </wsdl:message>
+  <wsdl:portType name="InfoSoap">
+    <wsdl:operation name="Version">
+      <wsdl:input message="tns:VersionSoapIn" />
+      <wsdl:output message="tns:VersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TheatreGroups">
+      <wsdl:input message="tns:TheatreGroupsSoapIn" />
+      <wsdl:output message="tns:TheatreGroupsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGenresImages">
+      <wsdl:input message="tns:GetGenresImagesSoapIn" />
+      <wsdl:output message="tns:GetGenresImagesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGenres">
+      <wsdl:input message="tns:GetGenresSoapIn" />
+      <wsdl:output message="tns:GetGenresSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRatingsImages">
+      <wsdl:input message="tns:GetRatingsImagesSoapIn" />
+      <wsdl:output message="tns:GetRatingsImagesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRatings">
+      <wsdl:input message="tns:GetRatingsSoapIn" />
+      <wsdl:output message="tns:GetRatingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterExtension">
+      <wsdl:input message="tns:GetPosterExtensionSoapIn" />
+      <wsdl:output message="tns:GetPosterExtensionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsPosterRequired">
+      <wsdl:input message="tns:IsPosterRequiredSoapIn" />
+      <wsdl:output message="tns:IsPosterRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterByRes">
+      <wsdl:input message="tns:GetPosterByResSoapIn" />
+      <wsdl:output message="tns:GetPosterByResSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPoster">
+      <wsdl:input message="tns:GetPosterSoapIn" />
+      <wsdl:output message="tns:GetPosterSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailerExtension">
+      <wsdl:input message="tns:GetTrailerExtensionSoapIn" />
+      <wsdl:output message="tns:GetTrailerExtensionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsTrailerRequired">
+      <wsdl:input message="tns:IsTrailerRequiredSoapIn" />
+      <wsdl:output message="tns:IsTrailerRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailer">
+      <wsdl:input message="tns:GetTrailerSoapIn" />
+      <wsdl:output message="tns:GetTrailerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ATMSettings">
+      <wsdl:input message="tns:ATMSettingsSoapIn" />
+      <wsdl:output message="tns:ATMSettingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Ranking">
+      <wsdl:input message="tns:RankingSoapIn" />
+      <wsdl:output message="tns:RankingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Movies">
+      <wsdl:input message="tns:MoviesSoapIn" />
+      <wsdl:output message="tns:MoviesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetail">
+      <wsdl:input message="tns:MovieDetailSoapIn" />
+      <wsdl:output message="tns:MovieDetailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Moviesv2">
+      <wsdl:input message="tns:Moviesv2SoapIn" />
+      <wsdl:output message="tns:Moviesv2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetailv2">
+      <wsdl:input message="tns:MovieDetailv2SoapIn" />
+      <wsdl:output message="tns:MovieDetailv2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDate">
+      <wsdl:input message="tns:ShowTimeByDateSoapIn" />
+      <wsdl:output message="tns:ShowTimeByDateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateTOSTRING">
+      <wsdl:input message="tns:ShowTimeByDateTOSTRINGSoapIn" />
+      <wsdl:output message="tns:ShowTimeByDateTOSTRINGSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovie">
+      <wsdl:input message="tns:ShowTimeByDateAndMovieSoapIn" />
+      <wsdl:output message="tns:ShowTimeByDateAndMovieSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTime">
+      <wsdl:input message="tns:WeeklyShowTimeSoapIn" />
+      <wsdl:output message="tns:WeeklyShowTimeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTimeByMovie">
+      <wsdl:input message="tns:WeeklyShowTimeByMovieSoapIn" />
+      <wsdl:output message="tns:WeeklyShowTimeByMovieSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovieAndStartTime">
+      <wsdl:input message="tns:ShowTimeByDateAndMovieAndStartTimeSoapIn" />
+      <wsdl:output message="tns:ShowTimeByDateAndMovieAndStartTimeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProducts">
+      <wsdl:input message="tns:GetProductsSoapIn" />
+      <wsdl:output message="tns:GetProductsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsByKeyLayout">
+      <wsdl:input message="tns:GetProductsByKeyLayoutSoapIn" />
+      <wsdl:output message="tns:GetProductsByKeyLayoutSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetKeyLayouts">
+      <wsdl:input message="tns:GetKeyLayoutsSoapIn" />
+      <wsdl:output message="tns:GetKeyLayoutsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProductImage">
+      <wsdl:input message="tns:GetProductImageSoapIn" />
+      <wsdl:output message="tns:GetProductImageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsProductImageRequired">
+      <wsdl:input message="tns:IsProductImageRequiredSoapIn" />
+      <wsdl:output message="tns:IsProductImageRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProductVideo">
+      <wsdl:input message="tns:GetProductVideoSoapIn" />
+      <wsdl:output message="tns:GetProductVideoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsProductVideoRequired">
+      <wsdl:input message="tns:IsProductVideoRequiredSoapIn" />
+      <wsdl:output message="tns:IsProductVideoRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsGenresImagesRequired">
+      <wsdl:input message="tns:IsGenresImagesRequiredSoapIn" />
+      <wsdl:output message="tns:IsGenresImagesRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsRatingsImagesRequired">
+      <wsdl:input message="tns:IsRatingsImagesRequiredSoapIn" />
+      <wsdl:output message="tns:IsRatingsImagesRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsScreenTypeImagesRequired">
+      <wsdl:input message="tns:IsScreenTypeImagesRequiredSoapIn" />
+      <wsdl:output message="tns:IsScreenTypeImagesRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetScreenTypeImage">
+      <wsdl:input message="tns:GetScreenTypeImageSoapIn" />
+      <wsdl:output message="tns:GetScreenTypeImageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetKLImage">
+      <wsdl:input message="tns:GetKLImageSoapIn" />
+      <wsdl:output message="tns:GetKLImageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsKLImageRequired">
+      <wsdl:input message="tns:IsKLImageRequiredSoapIn" />
+      <wsdl:output message="tns:IsKLImageRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsDistriImageRequired">
+      <wsdl:input message="tns:IsDistriImageRequiredSoapIn" />
+      <wsdl:output message="tns:IsDistriImageRequiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImage">
+      <wsdl:input message="tns:GetDistriImageSoapIn" />
+      <wsdl:output message="tns:GetDistriImageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImageInfo">
+      <wsdl:input message="tns:GetDistriImageInfoSoapIn" />
+      <wsdl:output message="tns:GetDistriImageInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InfoWeeklyShowTime">
+      <wsdl:input message="tns:InfoWeeklyShowTimeSoapIn" />
+      <wsdl:output message="tns:InfoWeeklyShowTimeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ComplexInfo">
+      <wsdl:input message="tns:ComplexInfoSoapIn" />
+      <wsdl:output message="tns:ComplexInfoSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="InfoSoap" type="tns:InfoSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Version">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/Version" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TheatreGroups">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/TheatreGroups" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenresImages">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetGenresImages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenres">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetGenres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatingsImages">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetRatingsImages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatings">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetRatings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterExtension">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPosterExtension" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPosterRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsPosterRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterByRes">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPosterByRes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPoster">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPoster" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailerExtension">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetTrailerExtension" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsTrailerRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsTrailerRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailer">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetTrailer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ATMSettings">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ATMSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ranking">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/Ranking" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Movies">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/Movies" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetail">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/MovieDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Moviesv2">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/Moviesv2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetailv2">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/MovieDetailv2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDate">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateTOSTRING">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateTOSTRING" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovie">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateAndMovie" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTime">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/WeeklyShowTime" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTimeByMovie">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/WeeklyShowTimeByMovie" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovieAndStartTime">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateAndMovieAndStartTime" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProducts">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProducts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsByKeyLayout">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductsByKeyLayout" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetKeyLayouts">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetKeyLayouts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductImage">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsProductImageRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsProductImageRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductVideo">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductVideo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsProductVideoRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsProductVideoRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsGenresImagesRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsGenresImagesRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsRatingsImagesRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsRatingsImagesRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsScreenTypeImagesRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsScreenTypeImagesRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetScreenTypeImage">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetScreenTypeImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetKLImage">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetKLImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsKLImageRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsKLImageRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsDistriImageRequired">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsDistriImageRequired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImage">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetDistriImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImageInfo">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetDistriImageInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InfoWeeklyShowTime">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/InfoWeeklyShowTime" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ComplexInfo">
+      <soap:operation soapAction="http://tempuri.org/CSwsInfo/Info/ComplexInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="InfoSoap12" type="tns:InfoSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Version">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/Version" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TheatreGroups">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/TheatreGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenresImages">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetGenresImages" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenres">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetGenres" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatingsImages">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetRatingsImages" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatings">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetRatings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterExtension">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPosterExtension" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPosterRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsPosterRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPosterByRes">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPosterByRes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPoster">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetPoster" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailerExtension">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetTrailerExtension" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsTrailerRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsTrailerRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTrailer">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetTrailer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ATMSettings">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ATMSettings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ranking">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/Ranking" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Movies">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/Movies" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetail">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/MovieDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Moviesv2">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/Moviesv2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MovieDetailv2">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/MovieDetailv2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDate">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateTOSTRING">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateTOSTRING" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovie">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateAndMovie" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTime">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/WeeklyShowTime" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WeeklyShowTimeByMovie">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/WeeklyShowTimeByMovie" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ShowTimeByDateAndMovieAndStartTime">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ShowTimeByDateAndMovieAndStartTime" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProducts">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProducts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductsByKeyLayout">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductsByKeyLayout" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetKeyLayouts">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetKeyLayouts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductImage">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductImage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsProductImageRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsProductImageRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProductVideo">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetProductVideo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsProductVideoRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsProductVideoRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsGenresImagesRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsGenresImagesRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsRatingsImagesRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsRatingsImagesRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsScreenTypeImagesRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsScreenTypeImagesRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetScreenTypeImage">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetScreenTypeImage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetKLImage">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetKLImage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsKLImageRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsKLImageRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsDistriImageRequired">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/IsDistriImageRequired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImage">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetDistriImage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDistriImageInfo">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/GetDistriImageInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InfoWeeklyShowTime">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/InfoWeeklyShowTime" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ComplexInfo">
+      <soap12:operation soapAction="http://tempuri.org/CSwsInfo/Info/ComplexInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Info">
+    <wsdl:port name="InfoSoap" binding="tns:InfoSoap">
+      <soap:address location="http://soporte.cinestarsoftware.net/CsWsInfo/Info.asmx" />
+    </wsdl:port>
+    <wsdl:port name="InfoSoap12" binding="tns:InfoSoap12">
+      <soap12:address location="http://soporte.cinestarsoftware.net/CsWsInfo/Info.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

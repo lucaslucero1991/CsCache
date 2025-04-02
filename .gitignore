@@ -1,0 +1,52 @@
+# Ignorar archivos de compilación de Visual Studio
+bin/
+obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignorar paquetes de NuGet
+packages/
+*.nupkg
+# Excepción: incluir el archivo packages.config si existe
+!packages.config
+
+# Ignorar archivos de configuración sensibles
+*.config
+!Web.config  # Mantener Web.config porque es esencial para la API web
+!appsettings.json  # Si usas appsettings.json, mantenlo también
+
+# Ignorar archivos temporales y de caché
+*.cache
+*.log
+*.tmp
+*.bak
+
+# Ignorar archivos generados por Visual Studio
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.pdb
+*.ilk
+*.idb
+
+# Ignorar archivos de Subversion (.svn)
+.svn/
+*/.svn/*
+*.svn-base
+
+# Ignorar carpetas y archivos específicos de pruebas o desarrollo
+TestResults/
+*.vspscc
+*.vssscc
+
+# Ignorar archivos de documentación generados
+*.xml  # Si generas documentación XML en bin/obj, ignóralos
+!*.csproj  # Asegúrate de no ignorar el archivo del proyecto
+
+# Ignorar archivos de entorno local
+[Dd]ebugPublic/
+[Pp]ublish/
+*.publishproj
