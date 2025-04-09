@@ -1,31 +1,111 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
 using CSCache.Model;
-using Microsoft.Ajax.Utilities;
-using System.Runtime.Remoting.Contexts;
-using System.Threading.Tasks;
 
 namespace CSCache.Controlador
 {
+        
     public class DAO
     {
-        public static DateTime ObtenerFechaCache(string id)
+
+        // Parámetros de conexión
+        private static string ip = "192.168.0.230"; // Reemplaza con tu IP
+        private static int puerto = 1453;           // Reemplaza con tu puerto si es diferente
+        private static string usuario = "ext_free"; // Reemplaza con tu usuario
+        private static string contraseña = "D3v_Fr33_SQL14#"; // Reemplaza con tu contraseña
+        private static string database = "CMS_Atlas";
+
+        // Cadena de conexión
+        private static string connectionString = $"Server={ip},{puerto};Database={database};User Id={usuario};Password={contraseña};";
+        /*
+        static void Main(string[] args)
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+
+            // Conexión y consulta
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    DateTime fecha = db.Caches.AsNoTracking().Single(c => c.IdCache == id).UltimaActualizacion;
-                    return fecha;
+                    // Abrir la conexión
+                    connection.Open();
+                    Console.WriteLine("Conexión exitosa a la base de datos 'cache'");
+
+                    // Consulta SQL simple
+                    string sql = "SELECT IdCache, FechaInicio, FechaFin, Estado, Detalle, Informe FROM caches";
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int idCache = reader.GetInt32(0);
+                                DateTime fechaInicio = reader.GetDateTime(1);
+                                DateTime fechaFin = reader.GetDateTime(2);
+                                string estado = reader.GetString(3);
+                                int detalle = reader.GetInt32(4);
+                                string informe = reader.GetString(5);
+
+                                Console.WriteLine($"IdCache: {idCache}, FechaInicio: {fechaInicio}, FechaFin: {fechaFin}, Estado: {estado}, Detalle: {detalle}, Informe: {informe}");
+
+
+                            }
+                        }
+                    }
                 }
-                catch (Exception)
+                catch (SqlException ex)
                 {
-                    db.Caches.Add(new Caches() { IdCache = "Peliculas", UltimaActualizacion = DateTime.Now });
-                    db.SaveChanges();
-                    return DateTime.Now;
+                    Console.WriteLine($"Error de SQL: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
             }
+
+            Console.WriteLine("Presiona cualquier tecla para salir...");
+            Console.ReadKey();
+        }
+        */
+        public static DateTime ObtenerFechaCache(string id)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    // Abrir la conexión
+                    connection.Open();
+                    Console.WriteLine("Conexión exitosa a la base de datos 'cache'");
+                    DateTime fechaInicio;
+                    // Consulta SQL simple
+                    string sql = "SELECT  FechaInicio FROM caches WHERE IdCache = " + id;
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+
+                                fechaInicio = reader.GetDateTime(0);
+                                Console.WriteLine($", FechaInicio: {fechaInicio}");
+                            }
+
+                        }
+                    }
+                    return DateTime.Now; ;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    //db.Caches.Add(new Caches() { IdCache = "Peliculas", FechaInicio = DateTime.Now });
+                    //db.SaveChanges();
+                    return DateTime.Now;
+                }  
+            }
+
         }
 
         public static string ObtenerWsInfo()
@@ -34,6 +114,7 @@ namespace CSCache.Controlador
             {
                 try
                 {
+                    //utilizar top 1 o select 1 
                     string res = db.web_site_options.AsNoTracking().First().wsinfo;
                     return res;
                 }
@@ -138,88 +219,6 @@ namespace CSCache.Controlador
             }
         }
 
-        public static List<Cache_Peliculas> ObtenerPeliculas2D3D(List<Cache_Peliculas> peliculas, string tec)
-        {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
-            {
-                Cache_Tecnologias tecn = db.Cache_Tecnologias.AsNoTracking().ToList().Find(t => t.NomTecnologia.ToUpper().Contains(tec));
-                return peliculas.Where(cp => db.Cache_Funciones.Any(cf => cf.CodPelicula == cp.CodPelicula && cf.CodTecnologia == tecn.CodTecnologia)).ToList();
-            }
-        }
-
-        public static List<Cache_Peliculas> ObtenerPeliculasComplejo(string comp)
-        {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
-            {
-                int id_comp = int.Parse(comp);
-                return db.Cache_Peliculas.Where(cp => db.Cache_Funciones.Any(cf => cf.CodPelicula == cp.CodPelicula && cf.CodComplejo == id_comp)).ToList();
-            }
-        }
-
-        public static List<Cache_Peliculas> ObtenerPeliculasEstreno(List<Cache_Peliculas> peliculas)
-        {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
-            {
-                var resultado = (
-                    from p in peliculas
-                    join cs in db.Cache_Cinesemanas
-                    on true equals true
-                    into csGroup
-                    from cs in csGroup.DefaultIfEmpty()
-                    where p.Estreno >= cs.Desde && p.Estreno <= cs.Hasta && cs.CodComplejo != 0 // null
-                    orderby p.Estreno, cs.CodComplejo
-                    select new
-                    {
-                        Pelicula = p,
-                        cs.CodComplejo,
-                        cs.Desde,
-                        cs.Hasta
-                    }
-                )
-                .DistinctBy(x => x.Pelicula.CodPelicula)
-                .Select(x => x.Pelicula)
-                .ToList();
-
-                return resultado;
-            }
-        }
-
-        public static List<Cache_Peliculas> ObtenerPeliculasPreventa(List<Cache_Peliculas> peliculas)
-        {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
-            {
-                var resultado = (
-                    from p in peliculas
-                    join f in db.Cache_Funciones
-                    on p.CodPelicula equals f.CodPelicula
-                    join cs in (
-                        from cinesemana in db.Cache_Cinesemanas
-                        group cinesemana by cinesemana.CodComplejo into g
-                        select new {
-                            CodComplejo = g.Key,
-                            UltimaFecha = g.Max(x => x.Hasta)
-                        }
-                    )
-                    on f.CodComplejo equals cs.CodComplejo
-                    where f.Fecha > cs.UltimaFecha
-                    orderby p.CodPelicula
-                    select p
-                )
-                .Distinct()
-                .ToList();
-
-                return resultado;
-            }
-        }
-
-        /*
-        public static List<Feature> ObtenerPeliculasNuevo()
-        {
-            List<Feature> result = new MovieController().GetMoviesAsync(190, "").GetAwaiter().GetResult();
-            return result;
-        }
-        */
-
         public static void GuardarCache(List<Cache_Peliculas> list, List<Cache_CopiasPelicula> copies, List<Cache_ComplejosGeo> listCompGeo, DateTime fecha)
         {
             GuardarLog("GuardarCache Inicio", 1004, "DAO.cs");
@@ -250,7 +249,7 @@ namespace CSCache.Controlador
                     db.Cache_CopiasPelicula.AddRange(copies);
 
                     Caches cache = db.Caches.AsNoTracking().Single(c => c.IdCache == "Peliculas");
-                    cache.UltimaActualizacion = fecha;
+                    cache.FechaInicio = fecha;
                     db.Entry(cache).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -466,7 +465,7 @@ namespace CSCache.Controlador
                     }
 
                     Caches cache = db.Caches.AsNoTracking().Single(c => c.IdCache == "Productos");
-                    cache.UltimaActualizacion = fecha;
+                    cache.FechaInicio = fecha;
                     db.SaveChanges();
                 }
                 catch (Exception ex)
