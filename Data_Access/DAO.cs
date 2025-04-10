@@ -320,35 +320,58 @@ namespace CSCache.Controlador
         {
             GuardarLog("GuardarCache Inicio", 1004, "DAO.cs");
 
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    db.Cache_Actores.RemoveRange(db.Cache_Actores.ToList());
-                    db.Cache_Directores.RemoveRange(db.Cache_Directores.ToList());
-                    db.Cache_Funciones.RemoveRange(db.Cache_Funciones.ToList());
-                    db.Cache_GruposSemana.RemoveRange(db.Cache_GruposSemana.ToList());
-                    db.Cache_Cinesemanas.RemoveRange(db.Cache_Cinesemanas.ToList());
-                    db.Cache_Salas.RemoveRange(db.Cache_Salas.ToList());
-                    db.Cache_Tecnologias.RemoveRange(db.Cache_Tecnologias.ToList());
-                    db.Cache_Peliculas.RemoveRange(db.Cache_Peliculas.ToList());
-                    db.Cache_CopiasPelicula.RemoveRange(db.Cache_CopiasPelicula.ToList());
-                    db.Cache_Clasificaciones.RemoveRange(db.Cache_Clasificaciones.ToList());
-                    db.Cache_Generos.RemoveRange(db.Cache_Generos.ToList());
-                    db.Cache_Lenguajes.RemoveRange(db.Cache_Lenguajes.ToList());
-                    db.SaveChanges();
-
+                    connection.Open();
+                    // Paso 1: Eliminar datos existentes de las tablas
+                    string[] tablesToClear = {
+                        "Cache_Actores", "Cache_Directores", "Cache_Funciones", "Cache_GruposSemana",
+                        "Cache_Cinesemanas", "Cache_Salas", "Cache_Tecnologias", "Cache_Peliculas",
+                        "Cache_CopiasPelicula", "Cache_Clasificaciones", "Cache_Generos", "Cache_Lenguajes"
+                    };
+                    foreach (var table in tablesToClear)
+                    {
+                        using (var command = new SqlCommand($"DELETE FROM {table}", connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    //paso 2 insertar peliculas
                     foreach (Cache_Peliculas peli in list)
                     {
-                        GuardarPelicula(db, peli);
+                        GuardarPelicula(connection, peli);
                     }
+                    //paso 3 insertar las copias de la peliculas
+                    foreach (var copia in copies)
+                    {
+                        string insertCopiaSql = @"
+                            INSERT INTO Cache_CopiasPelicula (CodPelicula, CodCopia, IdTecnologia, Titulo, CodIdioma, Subtitulada, Doblada )
+                            VALUES (@CodPelicula, @CodCopia, @IdTecnologia, @Titulo, @CodIdioma, @Subtitulada, @Doblada )";
+                        using (var command = new SqlCommand(insertCopiaSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@CodPelicula", copia.CodPelicula);
+                            command.Parameters.AddWithValue("@CodCopia", copia.CodCopia);
+                            command.Parameters.AddWithValue("@IdTecnologia", copia.IdTecnologia);
+                            command.Parameters.AddWithValue("@Titulo", copia.Titulo);
+                            command.Parameters.AddWithValue("@CodIdioma", copia.CodIdioma);
+                            command.Parameters.AddWithValue("@Subtitulada", copia.Subtitulada);
+                            command.Parameters.AddWithValue("@Doblada", copia.Doblada);
 
-                    db.Cache_CopiasPelicula.AddRange(copies);
-
-                    Caches cache = db.Caches.AsNoTracking().Single(c => c.IdCache == "Peliculas");
-                    cache.FechaInicio = fecha;
-                    db.Entry(cache).State = System.Data.Entity.EntityState.Modified;
-                    db.SaveChanges();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    //paso 4 Actualizar tabla de cache
+                    string updateCacheSql = @"
+                        UPDATE Caches 
+                        SET FechaInicio = @Fecha 
+                        WHERE IdCache = 'Peliculas'";
+                    using (var command = new SqlCommand(updateCacheSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@Fecha", fecha);
+                        command.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -360,107 +383,170 @@ namespace CSCache.Controlador
             GuardarLog("GuardarCache FIN", 1004, "DAO.cs");
         }
 
-        private static void GuardarPelicula(CSWebNuevoEntities db, Cache_Peliculas peli)
+        private static void GuardarPelicula(SqlConnection connection, Cache_Peliculas peli)
         {
-            GuardarClasificacion(db, peli.Cache_Clasificaciones);
-            GuardarGenero(db, peli.Cache_Generos);
-            GuardarLenguaje(db, peli.Cache_Lenguajes);
-            GuardarDatosPelicula(db, peli);
-            GuardarFunciones(db, peli.Cache_Funciones, peli.CodPelicula);
+            GuardarClasificacion(connection, peli.Cache_Clasificaciones);
+            GuardarGenero(connection, peli.Cache_Generos);
+            GuardarLenguaje(connection, peli.Cache_Lenguajes);
+            GuardarDatosPelicula(connection, peli);
+            GuardarFunciones(connection, peli.Cache_Funciones, peli.CodPelicula);
         }
 
-        private static void GuardarClasificacion(CSWebNuevoEntities db, Cache_Clasificaciones clas)
+        private static void GuardarClasificacion(SqlConnection connection, Cache_Clasificaciones clas)
         {
-            Cache_Clasificaciones exist = new CSWebNuevoEntities().Cache_Clasificaciones.AsNoTracking().SingleOrDefault(e => e.CodClasificacion == clas.CodClasificacion);
-            if (exist == null)
+            string checkSql = "SELECT COUNT(1) from Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
+            bool exist;
+            using (var command = new SqlCommand(checkSql, connection))
             {
-                db.Cache_Clasificaciones.Add(clas);
-                db.SaveChanges();
+                command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion );
+                exist = (int)command.ExecuteScalar() > 0;
+            }
+
+            if (exist == false)
+            {
+                string insertSql = "INSERT INTO Cache_Clasificaciones(CodClasificacion, NomClasificacion) VALUES (@CodClasificacion, @NomClasificacion)";
+                using (var command = new SqlCommand(insertSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion);
+                    command.Parameters.AddWithValue("@NomClasificacion", clas.NomClasificacion);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
-        private static void GuardarGenero(CSWebNuevoEntities db, Cache_Generos gene)
+        private static void GuardarGenero(SqlConnection connection, Cache_Generos gene)
         {
-            Cache_Generos exist = new CSWebNuevoEntities().Cache_Generos.AsNoTracking().SingleOrDefault(e => e.CodGenero == gene.CodGenero);
-            if (exist == null)
+            string checkSql = "SELECT COUNT(1) from Cache_Generos WHERE CodGenero = @CodGenero";
+            bool exist;
+            using (var command = new SqlCommand(checkSql, connection))
             {
-                db.Cache_Generos.Add(gene);
-                db.SaveChanges();
+                command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
+                exist = (int)command.ExecuteScalar() > 0;
+            }
+            if (exist == false)
+            {
+                string insertSql = "INSERT INTO Cache_Generos(CodGenero, NomGenero) VALUES (@CodGenero, @NomGenero)";
+                using (var command = new SqlCommand(insertSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
+                    command.Parameters.AddWithValue("@NomGenero", gene.NomGenero);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
-        private static void GuardarLenguaje(CSWebNuevoEntities db, Cache_Lenguajes leng)
+        private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng)
         {
-            Cache_Lenguajes exist = new CSWebNuevoEntities().Cache_Lenguajes.AsNoTracking().SingleOrDefault(e => e.CodLenguaje == leng.CodLenguaje);
-            if (exist == null)
+            string checkSql = "SELECT COUNT(1) from Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
+            bool exist;
+            using (var command = new SqlCommand(checkSql, connection))
             {
-                db.Cache_Lenguajes.Add(leng);
-                db.SaveChanges();
+                command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
+                exist = (int)command.ExecuteScalar() > 0;
+            }
+            if (exist == false)
+            {
+                string insertSql = "INSERT INTO Cache_Lenguajes(CodLenguaje, NomLenguaje) VALUES (@CodLenguaje, @NomLenguaje)";
+                using (var command = new SqlCommand(insertSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
+                    command.Parameters.AddWithValue("@NomLenguaje", leng.NomLenguaje);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
-        private static void GuardarDatosPelicula(CSWebNuevoEntities db, Cache_Peliculas peli)
+        private static void GuardarDatosPelicula(SqlConnection connection, Cache_Peliculas peli)
         {
-            // peli.Cache_Clasificaciones = null;
-            // peli.Cache_Generos = null;
-            // peli.Cache_Lenguajes = null;
 
-            db.Cache_Peliculas.Add(new Cache_Peliculas()
+            string insertSql = @"
+                INSERT INTO Cache_Peliculas (
+                    CodPelicula, Titulo, TituloOriginal, Subtitulada, Duracion, Estreno, 
+                    CodClasificacion, Sinopsis, SinopsisCorta, Web1, Web2, UrlTrailer, 
+                    CodGenero, CodLenguaje, Filename
+                ) VALUES (
+                    @CodPelicula, @Titulo, @TituloOriginal, @Subtitulada, @Duracion, @Estreno, 
+                    @CodClasificacion, @Sinopsis, @SinopsisCorta, @Web1, @Web2, @UrlTrailer, 
+                    @CodGenero, @CodLenguaje, @Filename
+                )";
+            using (var command = new SqlCommand(insertSql, connection))
             {
-                CodPelicula = peli.CodPelicula,
-                Titulo = peli.Titulo,
-                TituloOriginal = peli.TituloOriginal,
-                Subtitulada = peli.Subtitulada,
-                Duracion = peli.Duracion,
-                Estreno = peli.Estreno,
-                CodClasificacion = peli.Cache_Clasificaciones.CodClasificacion,
-                Sinopsis = peli.Sinopsis,
-                SinopsisCorta = peli.SinopsisCorta,
-                Web1 = peli.Web1,
-                Web2 = peli.Web2,
-                UrlTrailer = peli.UrlTrailer,
-                CodGenero = peli.Cache_Generos.CodGenero,
-                CodLenguaje = peli.Cache_Lenguajes.CodLenguaje,
-                Filename = peli.Filename
-            });
-            db.SaveChanges();
+                command.Parameters.AddWithValue("@CodPelicula", peli.CodPelicula);
+                command.Parameters.AddWithValue("@Titulo", peli.Titulo);
+                command.Parameters.AddWithValue("@TituloOriginal", peli.TituloOriginal);
+                command.Parameters.AddWithValue("@Subtitulada", peli.Subtitulada);
+                command.Parameters.AddWithValue("@Duracion", peli.Duracion);
+                command.Parameters.AddWithValue("@Estreno", peli.Estreno);
+                command.Parameters.AddWithValue("@CodClasificacion", peli.Cache_Clasificaciones?.CodClasificacion);
+                command.Parameters.AddWithValue("@Sinopsis", peli.Sinopsis);
+                command.Parameters.AddWithValue("@SinopsisCorta", peli.SinopsisCorta);
+                command.Parameters.AddWithValue("@Web1", peli.Web1 );
+                command.Parameters.AddWithValue("@Web2", peli.Web2 );
+                command.Parameters.AddWithValue("@UrlTrailer", peli.UrlTrailer);
+                command.Parameters.AddWithValue("@CodGenero", peli.Cache_Generos?.CodGenero );
+                command.Parameters.AddWithValue("@CodLenguaje", peli.Cache_Lenguajes?.CodLenguaje);
+                command.Parameters.AddWithValue("@Filename", peli.Filename);
 
-            GuardarActores(db, peli.CodPelicula, peli.Actores);
-            GuardarDirectores(db, peli.CodPelicula, peli.Directores);
+                command.ExecuteNonQuery();
+            }
+
+            GuardarActores(connection, peli.CodPelicula, peli.Actores);
+            GuardarDirectores(connection, peli.CodPelicula, peli.Directores);
         }
 
-        private static void GuardarActores(CSWebNuevoEntities db, int codPelicula, List<string> actores)
+        private static void GuardarActores(SqlConnection connection, int codPelicula, List<string> actores)
         {
+            if (actores == null || actores.Count == 0) return;
+
+            string checkSql = "SELECT COUNT(1) from Cache_Actores WHERE codPelicula = @codPelicula AND Actor = @Actor";
+            bool exist;
             foreach (string a in actores)
             {
-                if (!db.Cache_Actores.Any(ca => ca.CodPelicula == codPelicula && ca.Actor == a))
+                using (var command = new SqlCommand(checkSql, connection))
                 {
-                    db.Cache_Actores.Add(new Cache_Actores()
+                    command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                    command.Parameters.AddWithValue("@Actor", a);
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Actores(codPelicula, Actor) VALUES (@codPelicula, @Actor)";
+                    using (var command = new SqlCommand(insertSql, connection))
                     {
-                        CodPelicula = codPelicula,
-                        Actor = a
-                    });
+                        command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                        command.Parameters.AddWithValue("@Actor", a);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
-
-            db.SaveChanges();
         }
 
-        private static void GuardarDirectores(CSWebNuevoEntities db, int codPelicula, List<string> directores)
+        private static void GuardarDirectores(SqlConnection connection, int codPelicula, List<string> directores)
         {
+            if (directores == null || directores.Count == 0) return;
+
+            string checkSql = "SELECT COUNT(1) from Cache_Directores WHERE codPelicula = @codPelicula AND Director = @Director";
+            bool exist;
             foreach (string d in directores)
             {
-                if (!db.Cache_Directores.Any(cd => cd.CodPelicula == codPelicula && cd.Director == d))
+                using (var command = new SqlCommand(checkSql, connection))
                 {
-                    db.Cache_Directores.Add(new Cache_Directores()
+                    command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                    command.Parameters.AddWithValue("@Director", d);
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Directores(codPelicula, Director) VALUES (@codPelicula, @Director)";
+                    using (var command = new SqlCommand(insertSql, connection))
                     {
-                        CodPelicula = codPelicula,
-                        Director = d
-                    });
+                        command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                        command.Parameters.AddWithValue("@Director", d);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
-
-            db.SaveChanges();
+          
         }
 
         private static void GuardarFunciones(CSWebNuevoEntities db, List<Cache_Funciones> funciones, int codPel)
@@ -501,7 +587,7 @@ namespace CSCache.Controlador
                         Desde = comp.Cache_Cinesemanas.Desde,
                         Hasta = comp.Cache_Cinesemanas.Hasta
                     });
-
+                    //aca
                     foreach (Cache_GruposSemana grupo in comp.Cache_Cinesemanas.Cache_GruposSemanas)
                     {
                         db.Cache_GruposSemana.Add(new Cache_GruposSemana()

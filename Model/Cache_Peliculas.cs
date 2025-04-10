@@ -7,15 +7,13 @@ namespace CSCache.Model
 {
     public class Cache_Peliculas
     {
-        /*
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Cache_Peliculas()
         {
-            this.Cache_Actores = new HashSet<Cache_Actores>();
-            this.Cache_Directores = new HashSet<Cache_Directores>();
+            this.Actores = new List<string>();
+            this.Directores = new List<string>();
         }
-        */
-
+       
         public int CodPelicula { get; set; }
         public string Titulo { get; set; }
         public string TituloOriginal { get; set; }
@@ -31,15 +29,12 @@ namespace CSCache.Model
         public int CodGenero { get; set; }
         public int CodLenguaje { get; set; }
         public string Filename { get; set; }
+        public Cache_Clasificaciones Cache_Clasificaciones { get; set; }
+        public Cache_Generos Cache_Generos { get; set; }
+        public Cache_Lenguajes Cache_Lenguajes { get; set; }
+        public List<string> Actores { get; set; }
+        public List<string> Directores { get; set; }
 
-        /*
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cache_Actores> Cache_Actores { get; set; }
-        public virtual Cache_Clasificaciones Cache_Clasificaciones { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cache_Directores> Cache_Directores { get; set; }
-        public virtual Cache_Generos Cache_Generos { get; set; }
-        public virtual Cache_Lenguajes Cache_Lenguajes { get; set; }
-        */
+        
     }
 }
