@@ -6,15 +6,15 @@ using CSCache.Model;
 
 namespace CSCache.Controlador
 {
-    public class DAO : IDisponsable
+    public class DAO : IDisposable
     {
-        private static readonly string ConnectionString = 
+        private static string connectionString = 
             "Server=192.168.0.230,1453;Database=CMS_Atlas;User Id=ext_free;Password=D3v_Fr33_SQL14#;";
         private readonly SqlConnection _sharedConnection;
 
         public DAO()
         {
-            _sharedConnection = new SqlConnection(ConnectionString);
+            _sharedConnection = new SqlConnection(connectionString);
         }
         
         public void Dispose()
@@ -24,7 +24,7 @@ namespace CSCache.Controlador
         
         public static DateTime ObtenerFechaCache(string id)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection())
             {
                 try
                 {
