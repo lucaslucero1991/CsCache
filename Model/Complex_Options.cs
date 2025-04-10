@@ -36,5 +36,6 @@ namespace CSCache.Model
         public Nullable<bool> Allow_Refund { get; set; }
         public string Direccion { get; set; }
         public List<Cache_Salas> Cache_Salas { get; set; }
+        public Cache_Cinesemanas Cache_Cinesemanas { get; set; }
     }
 }

@@ -284,12 +284,12 @@ namespace CSCache.Controlador
                             command.ExecuteNonQuery();
                         }
                     }
-                    //paso 2 insertar peliculas
+                    //Paso 2: Insertar peliculas
                     foreach (Cache_Peliculas peli in list)
                     {
                         GuardarPelicula(connection, peli);
                     }
-                    //paso 3 insertar las copias de la peliculas
+                    //Paso 3: Insertar copias de la peliculas
                     foreach (var copia in copies)
                     {
                         string insertCopiaSql = @"
@@ -308,7 +308,7 @@ namespace CSCache.Controlador
                             command.ExecuteNonQuery();
                         }
                     }
-                    //paso 4 Actualizar tabla de cache
+                    //Paso 4: Actualizar tabla de cache
                     string updateCacheSql = @"
                         UPDATE Caches 
                         SET FechaInicio = @Fecha 
@@ -340,7 +340,7 @@ namespace CSCache.Controlador
 
         private static void GuardarClasificacion(SqlConnection connection, Cache_Clasificaciones clas)
         {
-            string checkSql = "SELECT COUNT(1) from Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
+            string checkSql = "SELECT COUNT(1) FROM Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
             bool exist;
             using (var command = new SqlCommand(checkSql, connection))
             {
@@ -362,7 +362,7 @@ namespace CSCache.Controlador
 
         private static void GuardarGenero(SqlConnection connection, Cache_Generos gene)
         {
-            string checkSql = "SELECT COUNT(1) from Cache_Generos WHERE CodGenero = @CodGenero";
+            string checkSql = "SELECT COUNT(1) FROM Cache_Generos WHERE CodGenero = @CodGenero";
             bool exist;
             using (var command = new SqlCommand(checkSql, connection))
             {
@@ -383,7 +383,7 @@ namespace CSCache.Controlador
 
         private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng)
         {
-            string checkSql = "SELECT COUNT(1) from Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
+            string checkSql = "SELECT COUNT(1) FROM Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
             bool exist;
             using (var command = new SqlCommand(checkSql, connection))
             {
@@ -444,7 +444,7 @@ namespace CSCache.Controlador
         {
             if (actores == null || actores.Count == 0) return;
 
-            string checkSql = "SELECT COUNT(1) from Cache_Actores WHERE codPelicula = @codPelicula AND Actor = @Actor";
+            string checkSql = "SELECT COUNT(1) FROM Cache_Actores WHERE codPelicula = @codPelicula AND Actor = @Actor";
             bool exist;
             foreach (string a in actores)
             {
@@ -471,7 +471,7 @@ namespace CSCache.Controlador
         {
             if (directores == null || directores.Count == 0) return;
 
-            string checkSql = "SELECT COUNT(1) from Cache_Directores WHERE codPelicula = @codPelicula AND Director = @Director";
+            string checkSql = "SELECT COUNT(1) FROM Cache_Directores WHERE codPelicula = @codPelicula AND Director = @Director";
             bool exist;
             foreach (string d in directores)
             {
@@ -495,35 +495,72 @@ namespace CSCache.Controlador
           
         }
 
-        private static void GuardarFunciones(CSWebNuevoEntities db, List<Cache_Funciones> funciones, int codPel)
+        private static void GuardarFunciones(SqlConnection connection, List<Cache_Funciones> funciones, int codPel)
         {
             foreach (Cache_Funciones func in funciones)
             {
-                GuardarFuncion(db, func, codPel);
+                GuardarFuncion(connection, func, codPel);
             }
         }
 
-        private static void GuardarFuncion(CSWebNuevoEntities db, Cache_Funciones func, int codPel)
+        private static void GuardarFuncion(SqlConnection connection, Cache_Funciones func, int codPel)
         {
-            GuardarTecnologia(db, func.Cache_Tecnologias);
-            GuardarCineSemana(db, func.Complex_Options);
-            GuardarDatosFuncion(db, func, codPel);
+            GuardarTecnologia(connection, func.Cache_Tecnologias);
+            GuardarCineSemana(connection, func.Complex_Options);
+            GuardarDatosFuncion(connection, func, codPel);
         }
 
-        private static void GuardarTecnologia(CSWebNuevoEntities db, Cache_Tecnologias tecn)
+        private static void GuardarTecnologia(SqlConnection connection, Cache_Tecnologias tecn)
         {
-            Cache_Tecnologias exist = new CSWebNuevoEntities().Cache_Tecnologias.AsNoTracking().SingleOrDefault(e => e.CodTecnologia == tecn.CodTecnologia);
-            if (exist == null)
-            {
-                db.Cache_Tecnologias.Add(tecn);
-                db.SaveChanges();
-            }
+            string checkSql = "SELECT COUNT(1) FROM Cache_Tecnologias WHERE CodTecnologia = @CodTecnologia ";
+            bool exist;
+            
+                using (var command = new SqlCommand(checkSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Tecnologias(CodTecnologia, NomTecnologia) VALUES (@CodTecnologia, @NomTecnologia)";
+                    using (var command = new SqlCommand(insertSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@codPelicula", tecn.CodTecnologia);
+                        command.Parameters.AddWithValue("@NomTecnologia", tecn.NomTecnologia);
+                        command.ExecuteNonQuery();
+                    }
+                }
         }
 
-        private static void GuardarCineSemana(CSWebNuevoEntities db, Complex_Options comp)
+        private static void GuardarCineSemana(SqlConnection connection, Complex_Options comp)
         {
             if (comp.Cache_Cinesemanas != null)
             {
+                string checkSql = "SELECT COUNT(1) FROM Cache_Cinesemanas WHERE CodComplejo = @CodComplejo ";
+                bool exist;
+                //TODO : falta if primero 
+                using (var command = new SqlCommand(checkSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Cinesemanas(CodComplejo, Desde, Hasta) VALUES (@CodComplejo, @Desde, @Hasta)";
+                    using (var command = new SqlCommand(insertSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
+                        //complex option no tiene la coneccion a cache_cinesemanas
+                        command.Parameters.AddWithValue("@Desde", comp.Cache_Cinesemanas.Desde);
+                        command.Parameters.AddWithValue("@Hasta", comp.Cache_Cinesemanas.Hasta);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            if (comp.Cache_Cinesemanas != null)
+            {
+                /*
                 int cant = new CSWebNuevoEntities().Cache_Cinesemanas.AsNoTracking().Where(c => c.CodComplejo == comp.CodComplejo).Count();
                 if (cant == 0)
                 {
@@ -533,8 +570,8 @@ namespace CSCache.Controlador
                         Desde = comp.Cache_Cinesemanas.Desde,
                         Hasta = comp.Cache_Cinesemanas.Hasta
                     });
-                    //aca
-                    foreach (Cache_GruposSemana grupo in comp.Cache_Cinesemanas.Cache_GruposSemanas)
+                    */
+                    foreach (Cache_GruposSemana grupo in comp.Cache_Cinesemanas.Cache_GruposSemana)
                     {
                         db.Cache_GruposSemana.Add(new Cache_GruposSemana()
                         {

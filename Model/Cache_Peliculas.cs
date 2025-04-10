@@ -32,6 +32,7 @@ namespace CSCache.Model
         public Cache_Clasificaciones Cache_Clasificaciones { get; set; }
         public Cache_Generos Cache_Generos { get; set; }
         public Cache_Lenguajes Cache_Lenguajes { get; set; }
+        public List<Cache_Funciones> Cache_Funciones { get; set; }
         public List<string> Actores { get; set; }
         public List<string> Directores { get; set; }
 

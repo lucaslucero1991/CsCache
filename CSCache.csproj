@@ -233,6 +233,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Model\AppEnumerations.cs" />
+    <Compile Include="Model\Cache_Cinesemanas.cs" />
+    <Compile Include="Model\Cache_Funciones.cs" />
+    <Compile Include="Model\Cache_GruposSemana.cs" />
     <Compile Include="Model\Cache_Lenguajes.cs" />
     <Compile Include="Model\Cache_Salas.cs" />
     <Compile Include="Model\Cache_Peliculas.cs" />
@@ -240,6 +243,7 @@
     <Compile Include="Model\Cache_ComplejosGeo.cs" />
     <Compile Include="Model\Cache_Clasificaciones.cs" />
     <Compile Include="Model\Cache_Generos.cs" />
+    <Compile Include="Model\Cache_Tecnologias.cs" />
     <Compile Include="Model\Complex_Options.cs" />
     <Compile Include="Model\Feature.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
