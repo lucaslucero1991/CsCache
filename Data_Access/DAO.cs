@@ -6,91 +6,37 @@ using CSCache.Model;
 
 namespace CSCache.Controlador
 {
-        
-    public class DAO
+    public class DAO : IDisponsable
     {
+        private static readonly string ConnectionString = 
+            "Server=192.168.0.230,1453;Database=CMS_Atlas;User Id=ext_free;Password=D3v_Fr33_SQL14#;";
+        private readonly SqlConnection _sharedConnection;
 
-        // Parámetros de conexión
-        private static string ip = "192.168.0.230"; // Reemplaza con tu IP
-        private static int puerto = 1453;           // Reemplaza con tu puerto si es diferente
-        private static string usuario = "ext_free"; // Reemplaza con tu usuario
-        private static string contraseña = "D3v_Fr33_SQL14#"; // Reemplaza con tu contraseña
-        private static string database = "CMS_Atlas";
-
-        // Cadena de conexión
-        private static string connectionString = $"Server={ip},{puerto};Database={database};User Id={usuario};Password={contraseña};";
-        /*
-        static void Main(string[] args)
+        public DAO()
         {
-
-            // Conexión y consulta
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    // Abrir la conexión
-                    connection.Open();
-                    Console.WriteLine("Conexión exitosa a la base de datos 'cache'");
-
-                    // Consulta SQL simple
-                    string sql = "SELECT IdCache, FechaInicio, FechaFin, Estado, Detalle, Informe FROM caches";
-
-                    using (SqlCommand command = new SqlCommand(sql, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                int idCache = reader.GetInt32(0);
-                                DateTime fechaInicio = reader.GetDateTime(1);
-                                DateTime fechaFin = reader.GetDateTime(2);
-                                string estado = reader.GetString(3);
-                                int detalle = reader.GetInt32(4);
-                                string informe = reader.GetString(5);
-
-                                Console.WriteLine($"IdCache: {idCache}, FechaInicio: {fechaInicio}, FechaFin: {fechaFin}, Estado: {estado}, Detalle: {detalle}, Informe: {informe}");
-
-
-                            }
-                        }
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    Console.WriteLine($"Error de SQL: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-            }
-
-            Console.WriteLine("Presiona cualquier tecla para salir...");
-            Console.ReadKey();
+            _sharedConnection = new SqlConnection(ConnectionString);
         }
-        */
+        
+        public void Dispose()
+        {
+            _sharedConnection?.Dispose();
+        }
+        
         public static DateTime ObtenerFechaCache(string id)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 try
                 {
                     connection.Open();
-                    DateTime fechaInicio;
-                    string sql = "SELECT  FechaInicio FROM caches WHERE IdCache = " + id;
-                    using (SqlCommand command = new SqlCommand(sql, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
+                    Console.WriteLine("Conexión exitosa a la base de datos 'cache'");
+                    string sql = "SELECT Top 1 FechaInicio FROM caches WHERE IdCache = " + id;
 
-                                fechaInicio = reader.GetDateTime(0);
-                                Console.WriteLine($", FechaInicio: {fechaInicio}");
-                            }
-                        }
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        var result = command.ExecuteScalar().ToDateTime();
+                        return result ?? throw new InvalidOperationException("No cache found.");
                     }
-                    return DateTime.Now;
                 }
                 catch (Exception ex)
                 {
@@ -609,15 +555,32 @@ namespace CSCache.Controlador
                 GuardarSala(db, sala, comp.CodComplejo);
             }
         }
-
-        private static void GuardarSala(CSWebNuevoEntities db, Cache_Salas sala, int codComp)
+        
+        private static void GuardarSala(SqlConnection connection, Cache_Salas sala, int codComp)
         {
-            Cache_Salas exist = new CSWebNuevoEntities().Cache_Salas.AsNoTracking().SingleOrDefault(e => e.CodSala == sala.CodSala && e.CodComplejo == codComp);
-            if (exist == null)
+            string checkSql = "SELECT COUNT(1) FROM Cache_Salas WHERE CodSala = @CodSala AND CodComplejo = @CodComplejo";
+            using (var checkCommand = new SqlCommand(checkSql, connection))
             {
-                sala.CodComplejo = codComp;
-                db.Cache_Salas.Add(sala);
-                db.SaveChanges();
+                checkCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
+                checkCommand.Parameters.AddWithValue("@CodComplejo", codComp);
+                int exists = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+                if (exists == 0)
+                {
+                    // Insert new sala
+                    string insertSql = @"
+                INSERT INTO Cache_Salas (CodSala, NomSala, CodTipoSala, NomTipoSala, CodComplejo)
+                VALUES (@CodSala, @Nombre, @CodTipoSala, @NomTipoSala, @CodComplejo)";
+                    using (var insertCommand = new SqlCommand(insertSql, connection))
+                    {
+                        insertCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
+                        insertCommand.Parameters.AddWithValue("@Nombre", sala.NomSala);
+                        insertCommand.Parameters.AddWithValue("@CodTipoSala", sala.CodTipoSala);
+                        insertCommand.Parameters.AddWithValue("@NomTipoSala", sala.NomTipoSala);
+                        insertCommand.Parameters.AddWithValue("@CodComplejo", codComp);
+                        insertCommand.ExecuteNonQuery();
+                    }
+                }
             }
         }
 
@@ -630,6 +593,50 @@ namespace CSCache.Controlador
             db.Cache_Funciones.Add(func);
             db.SaveChanges();
         }
+
+private static void GuardarDatosFuncion(Cache_Funciones func, int codPel)
+{
+    using (var connection = new SqlConnection(ConnectionString))
+    {
+        connection.Open();
+
+        func.CodComplejo = func.Complejos?.CodComplejo ?? func.CodComplejo;
+        func.CodSala = func.CodSala;
+        func.CodTecnologia = func.CodTecnologia;
+        func.CodPelicula = codPel;
+
+        string sql = @"
+            INSERT INTO Cache_Funciones (
+                CodFuncion, CodComplejo, HoraComienzo, Vuelta, Estado, Preestreno, 
+                ButacasDisponibles, ButacasHabilitadas, CodDistribucion, Fecha, 
+                CodSala, CodTecnologia, CodPelicula, CodCopia
+            )
+            VALUES (
+                @CodFuncion, @CodComplejo, @HoraComienzo, @Vuelta, @Estado, @Preestreno, 
+                @ButacasDisponibles, @ButacasHabilitadas, @CodDistribucion, @Fecha, 
+                @CodSala, @CodTecnologia, @CodPelicula, @CodCopia
+            )";
+        using (var command = new SqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("@CodFuncion", func.CodFuncion);
+            command.Parameters.AddWithValue("@CodComplejo", func.CodComplejo);
+            command.Parameters.AddWithValue("@HoraComienzo", func.HoraComienzo ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@Vuelta", func.Vuelta);
+            command.Parameters.AddWithValue("@Estado", func.Estado ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@Preestreno", func.Preestreno);
+            command.Parameters.AddWithValue("@ButacasDisponibles", func.ButacasDisponibles);
+            command.Parameters.AddWithValue("@ButacasHabilitadas", func.ButacasHabilitadas);
+            command.Parameters.AddWithValue("@CodDistribucion", func.CodDistribucion);
+            command.Parameters.AddWithValue("@Fecha", func.Fecha);
+            command.Parameters.AddWithValue("@CodSala", func.CodSala);
+            command.Parameters.AddWithValue("@CodTecnologia", func.CodTecnologia);
+            command.Parameters.AddWithValue("@CodPelicula", func.CodPelicula);
+            command.Parameters.AddWithValue("@CodCopia", func.CodCopia ?? (object)DBNull.Value);
+
+            command.ExecuteNonQuery();
+        }
+    }
+}
 
         public static void GuardarCacheProductos(List<Cache_Productos> list, DateTime fecha)
         {
