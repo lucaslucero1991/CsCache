@@ -40,7 +40,7 @@ namespace CSCache.Controlador
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
+                    GuardarLog("DAO.ObtenerFechaCache " + ex.ToString(), 1004, "DAO.cs");
                     return DateTime.Now;
                 }  
             }
@@ -49,52 +49,78 @@ namespace CSCache.Controlador
 
         public static string ObtenerWsInfo()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
+
                     connection.Open();
-                    string sql = "SELECT TOP 1 wsinfo FROM web_site_options";
+
+                    string sql = "SELECT TOP 1  wsinfo FROM web_site_options";
+
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         var result = command.ExecuteScalar().ToString();
-                        return result ?? throw new InvalidOperationException("No wsinfo found.");
+                        return result;
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Error retrieving wsinfo.", ex);
+                    GuardarLog("DAO.ObtenerWsInfo " + ex.ToString(), 1004, "DAO.cs");
+                    throw ex;
+                    
                 }
             }
         }
 
         public static int ObtenerGrupoComplejosId()
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    int res = db.web_site_options.AsNoTracking().First().theatreGroup;
-                    return res;
+                    connection.Open();
+                    string sql = "SELECT TOP 1  theatreGroup FROM web_site_options";
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        var result = command.ExecuteScalar();
+                        if(result != null)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        throw new Exception("theatreGroup is not found");
+                          
+                    }
                 }
                 catch (Exception ex)
                 {
+                    GuardarLog("DAO.ObtenerGrupoComplejosId " + ex.ToString(), 1004, "DAO.cs");
                     throw ex;
+
                 }
             }
         }
 
         public static string GetParametro(string key)
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    string res = db.Parametros.AsNoTracking().Single(p => p.ParamKey == key).ParamValue;
-                    return res;
+                    connection.Open();
+                    
+                    string sql = "SELECT  ParamValue FROM Parametros WHERE ParamKey = " + key;
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        var result = command.ExecuteScalar().ToString();
+                        return result;
+                    }
                 }
                 catch (Exception ex)
                 {
+                    GuardarLog("DAO.GetParametro " + ex.ToString(), 1004, "DAO.cs");
                     throw ex;
                 }
             }
@@ -102,40 +128,84 @@ namespace CSCache.Controlador
 
         public static void GuardarLog(string mensaje, int tipoError, string pagina)
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    db.LogWeb.Add(new LogWeb()
+                    connection.Open();
+                    string sql = "INSERT  INTO LogWeb (TipoError, Pagina, Fecha, FechaServidor, Aplicacion, Mensaje) VALUES (@TipoError,@Pagina, @Fecha, @FechaServidor, @Aplicacion, @Mensaje)";
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        TipoError = tipoError,
-                        Pagina = pagina,
-                        Fecha = DateTime.Now,
-                        FechaServidor = DateTime.Now,
-                        Aplicacion = "CSWebNueva",
-                        Mensaje = mensaje,
-                    });
-                    db.SaveChanges();
+                        command.Parameters.AddWithValue("@TipoError",tipoError);
+                        command.Parameters.AddWithValue("@Pagina", pagina);
+                        command.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                        command.Parameters.AddWithValue("@FechaServidor", DateTime.Now);
+                        command.Parameters.AddWithValue("@Aplicacion", "CSWebNueva");
+                        command.Parameters.AddWithValue("@Mensaje", mensaje);
+                        command.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
+                    GuardarLog("DAO.GuardarLog " + ex.ToString(), 1004, "DAO.cs");
                     throw ex;
+
                 }
             }
         }
 
         public static List<Complex_Options> ObtenerComplejos()
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
+                    connection.Open();
+                    List<Complex_Options> complejos = new List<Complex_Options>();
+                    string sql = "SELECT CodComplejo, CodTerminal, Nombre, Email, PassEmail, SMTPServer, EnableSSL, PortNumber, GoogleAnalytics, Allow_Sale, Allow_ConcessionSale, Request_TaxId, Tolerancia,MaxSales, Hourly, ComplexDetails, Request_MinRangeTax, Request_MaxRangeTax, Barcode,PickupCode, AuxEmail, AuxSMTPServer, AuxPort, AuxPassword, AuxEnableSSL, MinimunSeatToSell, Allow_Refund FROM Complex_Options";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var complejo = new Complex_Options();
+                                complejo.CodComplejo = reader.GetInt32(0);
+                                complejo.CodTerminal = reader.GetInt32(1);
+                                complejo.Nombre = reader.GetString(2);
+                                complejo.Email = reader.GetString(3);
+                                complejo.PassEmail = reader.GetString(4);
+                                complejo.SMTPServer = reader.GetString(5);
+                                complejo.EnableSSL = reader.GetBoolean(6); //reader.IsDBNull(6) ? null : reader.GetBoolean(6);
+                                complejo.PortNumber = reader.GetString(7);
+                                complejo.GoogleAnalytics = reader.GetString(8);
+                                complejo.Allow_Sale = reader.GetBoolean(9);
+                                complejo.Allow_ConcessionSale = reader.GetBoolean(10);
+                                complejo.Request_TaxId = reader.GetBoolean(11);
+                                complejo.Tolerancia = reader.GetInt32(12);
+                                complejo.MaxSales = reader.GetInt32(13);
+                                complejo.Hourly = reader.GetString(14);
+                                complejo.ComplexDetails = reader.GetString(15);
+                                complejo.Request_MinRangeTax = reader.GetInt32(16);
+                                complejo.Request_MaxRangeTax = reader.GetInt32(17);
+                                complejo.Barcode = reader.GetString(18);
+                                complejo.PickupCode = reader.GetInt32(19);
+                                complejo.AuxEmail = reader.GetString(20);
+                                complejo.AuxSMTPServer = reader.GetString(21);
+                                complejo.AuxPort = reader.GetInt32(22);
+                                complejo.AuxPassword = reader.GetString(23);
+                                complejo.AuxEnableSSL = reader.GetBoolean(24);
+                                complejo.MinimunSeatToSell = reader.GetInt32(25);
+                                complejo.Allow_Refund = reader.GetBoolean(26);
+                                complejo.Direccion = reader.GetString(27);
+                                complejo.Cache_Salas = new List<Cache_Salas>();
 
-                    List<Complex_Options> complejos = db.Complex_Options.AsNoTracking().ToList();
-                    foreach (Complex_Options comp in complejos)
-                        comp.Cache_Salas = new List<Cache_Salas>();
-
-                    return complejos;
+                                complejos.Add(complejo);
+                            }
+                           return complejos;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -147,12 +217,42 @@ namespace CSCache.Controlador
 
         public static List<Cache_Peliculas> ObtenerPeliculas()
         {
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    List<Cache_Peliculas> peliculas = db.Cache_Peliculas.AsNoTracking().ToList();
-                    return peliculas;
+                    connection.Open();
+                    List<Cache_Peliculas> peliculas = new List<Cache_Peliculas>();
+
+                    string sql = "SELECT CodPelicula, Titulo, TituloOriginal, Subtitulada, Duracion, Estreno, CodClasificacion, Sinopsis, SinopsisCorta, Web1, Web2, UrlTrailer, CodGenero, CodLenguaje, Filename FROM Cache_Peliculas ";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var pelicula = new Cache_Peliculas();
+                                pelicula.CodPelicula = reader.GetInt32(0);
+                                pelicula.Titulo = reader.GetString(1);
+                                pelicula.TituloOriginal = reader.GetString(2);
+                                pelicula.Subtitulada = reader.GetBoolean(3);
+                                pelicula.Duracion = reader.GetInt32(4);
+                                pelicula.Estreno = reader.GetDateTime(5);
+                                pelicula.CodClasificacion = reader.GetInt16(6);
+                                pelicula.Sinopsis = reader.GetString(7);
+                                pelicula.SinopsisCorta = reader.GetString(8);
+                                pelicula.Web1 = reader.GetString(9);
+                                pelicula.Web2 = reader.GetString(10);
+                                pelicula.UrlTrailer = reader.GetString(11);
+                                pelicula.CodGenero = reader.GetInt32(12);
+                                pelicula.CodLenguaje = reader.GetInt32(13);
+                                pelicula.Filename = reader.GetString(14);
+
+                                peliculas.Add(pelicula);
+                            }
+                            return peliculas;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
