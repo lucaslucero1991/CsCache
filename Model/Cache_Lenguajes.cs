@@ -14,6 +14,6 @@ namespace CSCache.Model
 
         public int CodLenguaje { get; set; }
         public string NomLenguaje { get; set; }
-        public virtual List<Cache_Peliculas> Cache_Peliculas { get; set; }
+        public List<Cache_Peliculas> Cache_Peliculas { get; set; }
     }
 }

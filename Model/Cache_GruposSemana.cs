@@ -12,7 +12,5 @@ namespace CSCache.Model
         public System.DateTime Desde { get; set; }
         public System.DateTime Hasta { get; set; }
         public int CodComplejo { get; set; }
-
-        //public Complejos Complejos { get; set; }
     }
 }

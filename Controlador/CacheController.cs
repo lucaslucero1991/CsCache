@@ -174,7 +174,7 @@ namespace CSCache.Controlador
                         short aux = Convert.ToInt16(nodoPel.ChildNodes[0]["RatingID"].InnerText);
 
                         Cache_Clasificaciones clas = null;
-                        Cache_Peliculas pelAux = list.Find((Predicate<Cache_Peliculas>)(x => x.Cache_Clasificaciones != null && x.Cache_Clasificaciones.CodClasificacion == aux));
+                        Cache_Peliculas pelAux = list.Find(x => x.Cache_Clasificaciones != null && x.Cache_Clasificaciones.CodClasificacion == aux);
 
                         if (pelAux != null)
                         {

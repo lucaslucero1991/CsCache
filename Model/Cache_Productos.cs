@@ -13,6 +13,5 @@ namespace CSCache.Model
         public Nullable<decimal> Precio { get; set; }
         public short Posicion { get; set; }
         public string NombreArchivo { get; set; }
-        public Complejos Complejos { get; set; }
     }
 }

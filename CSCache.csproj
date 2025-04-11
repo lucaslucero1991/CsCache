@@ -246,7 +246,6 @@
     <Compile Include="Model\Cache_Clasificaciones.cs" />
     <Compile Include="Model\Cache_Generos.cs" />
     <Compile Include="Model\Cache_Tecnologias.cs" />
-    <Compile Include="Model\Complejos.cs" />
     <Compile Include="Model\Complex_Options.cs" />
     <Compile Include="Model\DeviceImageSettings.cs" />
     <Compile Include="Model\Feature.cs" />
