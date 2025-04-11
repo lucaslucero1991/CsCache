@@ -34,8 +34,13 @@ namespace CSCache.Controlador
 
                     using (var command = new SqlCommand(sql, connection))
                     {
-                        var result = command.ExecuteScalar().ToDateTime();
-                        return result ?? throw new InvalidOperationException("No cache found.");
+                        var result = command.ExecuteScalar();
+                        if (result != null)
+                        {
+                            return Convert.ToDateTime(result);
+                        }
+
+                        return DateTime.Now;
                     }
                 }
                 catch (Exception ex)
