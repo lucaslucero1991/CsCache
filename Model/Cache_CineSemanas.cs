@@ -11,5 +11,6 @@ namespace CSCache.Model
         public System.DateTime Desde { get; set; }
         public System.DateTime Hasta { get; set; }
         public List<Cache_GruposSemana> Cache_GruposSemana { get; set; }
-        //public  Complejos Complejos { get; set; }
+        public  Complejos Complejos { get; set; }
     }
+}

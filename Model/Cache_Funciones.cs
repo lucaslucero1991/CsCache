@@ -23,6 +23,7 @@ namespace CSCache.Model
         public Nullable<int> CodCopia { get; set; }
         public Complex_Options Complex_Options { get; set; }
         public Cache_Tecnologias Cache_Tecnologias { get; set; }
-        //public Complejos Complejos { get; set; }
+        public Cache_Salas Cache_Salas { get; set; }
+        public Complejos Complejos { get; set; }
     }
 }

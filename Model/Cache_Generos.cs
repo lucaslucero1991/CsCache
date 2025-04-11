@@ -18,4 +18,3 @@ namespace CSCache.Model
         public  List<Cache_Peliculas> Cache_Peliculas { get; set; }
     }
 }
-}

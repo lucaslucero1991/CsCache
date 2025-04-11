@@ -214,6 +214,42 @@ namespace CSCache.Controlador
                 }
             }
         }
+        public static List<DeviceImageSettings> ConfiguracionesDispositivosImagenes()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    List<DeviceImageSettings> dispositivos = new List<DeviceImageSettings>();
+                    string sql = "SELECT Id, ImageTypeCode, DesktopWidth, TabletWidth, SmartphoneWidth, CellphoneWidth";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var dispositivo = new DeviceImageSettings();
+                                dispositivo.Id = reader.GetInt32(0);
+                                dispositivo.ImageTypeCode = reader.GetString(1);
+                                dispositivo.DesktopWidth = reader.GetInt32(2);
+                                dispositivo.TabletWidth = reader.GetInt32(3);
+                                dispositivo.SmartphoneWidth = reader.GetInt32(4);
+                                dispositivo.CellphoneWidth = reader.GetInt32(5);
+
+                                dispositivos.Add(dispositivo);
+                            }
+                            return dispositivos;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    GuardarLog("DAO.ObtenerComplejos " + ex.ToString(), 1004, "DAO.cs");
+                    throw ex;
+                }
+            }
+        }
 
         public static List<Cache_Peliculas> ObtenerPeliculas()
         {
@@ -340,160 +376,206 @@ namespace CSCache.Controlador
 
         private static void GuardarClasificacion(SqlConnection connection, Cache_Clasificaciones clas)
         {
-            string checkSql = "SELECT COUNT(1) FROM Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
-            bool exist;
-            using (var command = new SqlCommand(checkSql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion );
-                exist = (int)command.ExecuteScalar() > 0;
-            }
-
-            if (exist == false)
-            {
-                string insertSql = "INSERT INTO Cache_Clasificaciones(CodClasificacion, NomClasificacion) VALUES (@CodClasificacion, @NomClasificacion)";
-                using (var command = new SqlCommand(insertSql, connection))
+                string checkSql = "SELECT COUNT(1) FROM Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
+                bool exist;
+                using (var command = new SqlCommand(checkSql, connection))
                 {
-                    command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion);
-                    command.Parameters.AddWithValue("@NomClasificacion", clas.NomClasificacion);
-                    command.ExecuteNonQuery();
+                    command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion );
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Clasificaciones(CodClasificacion, NomClasificacion) VALUES (@CodClasificacion, @NomClasificacion)";
+                    using (var command = new SqlCommand(insertSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion);
+                        command.Parameters.AddWithValue("@NomClasificacion", clas.NomClasificacion);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
-        }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarClasificacion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+}
 
         private static void GuardarGenero(SqlConnection connection, Cache_Generos gene)
         {
-            string checkSql = "SELECT COUNT(1) FROM Cache_Generos WHERE CodGenero = @CodGenero";
-            bool exist;
-            using (var command = new SqlCommand(checkSql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
-                exist = (int)command.ExecuteScalar() > 0;
-            }
-            if (exist == false)
-            {
-                string insertSql = "INSERT INTO Cache_Generos(CodGenero, NomGenero) VALUES (@CodGenero, @NomGenero)";
-                using (var command = new SqlCommand(insertSql, connection))
+                string checkSql = "SELECT COUNT(1) FROM Cache_Generos WHERE CodGenero = @CodGenero";
+                bool exist;
+                using (var command = new SqlCommand(checkSql, connection))
                 {
                     command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
-                    command.Parameters.AddWithValue("@NomGenero", gene.NomGenero);
-                    command.ExecuteNonQuery();
+                    exist = (int)command.ExecuteScalar() > 0;
+                }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Generos(CodGenero, NomGenero) VALUES (@CodGenero, @NomGenero)";
+                    using (var command = new SqlCommand(insertSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
+                        command.Parameters.AddWithValue("@NomGenero", gene.NomGenero);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
-        }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarGenero" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+}
 
         private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng)
         {
-            string checkSql = "SELECT COUNT(1) FROM Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
-            bool exist;
-            using (var command = new SqlCommand(checkSql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
-                exist = (int)command.ExecuteScalar() > 0;
-            }
-            if (exist == false)
-            {
-                string insertSql = "INSERT INTO Cache_Lenguajes(CodLenguaje, NomLenguaje) VALUES (@CodLenguaje, @NomLenguaje)";
-                using (var command = new SqlCommand(insertSql, connection))
+                string checkSql = "SELECT COUNT(1) FROM Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
+                bool exist;
+                using (var command = new SqlCommand(checkSql, connection))
                 {
                     command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
-                    command.Parameters.AddWithValue("@NomLenguaje", leng.NomLenguaje);
-                    command.ExecuteNonQuery();
+                    exist = (int)command.ExecuteScalar() > 0;
                 }
+                if (exist == false)
+                {
+                    string insertSql = "INSERT INTO Cache_Lenguajes(CodLenguaje, NomLenguaje) VALUES (@CodLenguaje, @NomLenguaje)";
+                    using (var command = new SqlCommand(insertSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
+                        command.Parameters.AddWithValue("@NomLenguaje", leng.NomLenguaje);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarLenguaje" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
             }
         }
 
         private static void GuardarDatosPelicula(SqlConnection connection, Cache_Peliculas peli)
         {
-
-            string insertSql = @"
-                INSERT INTO Cache_Peliculas (
-                    CodPelicula, Titulo, TituloOriginal, Subtitulada, Duracion, Estreno, 
-                    CodClasificacion, Sinopsis, SinopsisCorta, Web1, Web2, UrlTrailer, 
-                    CodGenero, CodLenguaje, Filename
-                ) VALUES (
-                    @CodPelicula, @Titulo, @TituloOriginal, @Subtitulada, @Duracion, @Estreno, 
-                    @CodClasificacion, @Sinopsis, @SinopsisCorta, @Web1, @Web2, @UrlTrailer, 
-                    @CodGenero, @CodLenguaje, @Filename
-                )";
-            using (var command = new SqlCommand(insertSql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@CodPelicula", peli.CodPelicula);
-                command.Parameters.AddWithValue("@Titulo", peli.Titulo);
-                command.Parameters.AddWithValue("@TituloOriginal", peli.TituloOriginal);
-                command.Parameters.AddWithValue("@Subtitulada", peli.Subtitulada);
-                command.Parameters.AddWithValue("@Duracion", peli.Duracion);
-                command.Parameters.AddWithValue("@Estreno", peli.Estreno);
-                command.Parameters.AddWithValue("@CodClasificacion", peli.Cache_Clasificaciones?.CodClasificacion);
-                command.Parameters.AddWithValue("@Sinopsis", peli.Sinopsis);
-                command.Parameters.AddWithValue("@SinopsisCorta", peli.SinopsisCorta);
-                command.Parameters.AddWithValue("@Web1", peli.Web1 );
-                command.Parameters.AddWithValue("@Web2", peli.Web2 );
-                command.Parameters.AddWithValue("@UrlTrailer", peli.UrlTrailer);
-                command.Parameters.AddWithValue("@CodGenero", peli.Cache_Generos?.CodGenero );
-                command.Parameters.AddWithValue("@CodLenguaje", peli.Cache_Lenguajes?.CodLenguaje);
-                command.Parameters.AddWithValue("@Filename", peli.Filename);
+                string insertSql = @"
+                    INSERT INTO Cache_Peliculas (
+                        CodPelicula, Titulo, TituloOriginal, Subtitulada, Duracion, Estreno, 
+                        CodClasificacion, Sinopsis, SinopsisCorta, Web1, Web2, UrlTrailer, 
+                        CodGenero, CodLenguaje, Filename
+                    ) VALUES (
+                        @CodPelicula, @Titulo, @TituloOriginal, @Subtitulada, @Duracion, @Estreno, 
+                        @CodClasificacion, @Sinopsis, @SinopsisCorta, @Web1, @Web2, @UrlTrailer, 
+                        @CodGenero, @CodLenguaje, @Filename
+                    )";
+                using (var command = new SqlCommand(insertSql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodPelicula", peli.CodPelicula);
+                    command.Parameters.AddWithValue("@Titulo", peli.Titulo);
+                    command.Parameters.AddWithValue("@TituloOriginal", peli.TituloOriginal);
+                    command.Parameters.AddWithValue("@Subtitulada", peli.Subtitulada);
+                    command.Parameters.AddWithValue("@Duracion", peli.Duracion);
+                    command.Parameters.AddWithValue("@Estreno", peli.Estreno);
+                    command.Parameters.AddWithValue("@CodClasificacion", peli.Cache_Clasificaciones?.CodClasificacion);
+                    command.Parameters.AddWithValue("@Sinopsis", peli.Sinopsis);
+                    command.Parameters.AddWithValue("@SinopsisCorta", peli.SinopsisCorta);
+                    command.Parameters.AddWithValue("@Web1", peli.Web1 );
+                    command.Parameters.AddWithValue("@Web2", peli.Web2 );
+                    command.Parameters.AddWithValue("@UrlTrailer", peli.UrlTrailer);
+                    command.Parameters.AddWithValue("@CodGenero", peli.Cache_Generos?.CodGenero );
+                    command.Parameters.AddWithValue("@CodLenguaje", peli.Cache_Lenguajes?.CodLenguaje);
+                    command.Parameters.AddWithValue("@Filename", peli.Filename);
 
-                command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
+                }
+
+                GuardarActores(connection, peli.CodPelicula, peli.Actores);
+                GuardarDirectores(connection, peli.CodPelicula, peli.Directores);
             }
-
-            GuardarActores(connection, peli.CodPelicula, peli.Actores);
-            GuardarDirectores(connection, peli.CodPelicula, peli.Directores);
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarDatosPelicula" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
         }
 
         private static void GuardarActores(SqlConnection connection, int codPelicula, List<string> actores)
         {
-            if (actores == null || actores.Count == 0) return;
-
-            string checkSql = "SELECT COUNT(1) FROM Cache_Actores WHERE codPelicula = @codPelicula AND Actor = @Actor";
-            bool exist;
-            foreach (string a in actores)
+            try
             {
-                using (var command = new SqlCommand(checkSql, connection))
+                if (actores == null || actores.Count == 0) return;
+
+                string checkSql = "SELECT COUNT(1) FROM Cache_Actores WHERE codPelicula = @codPelicula AND Actor = @Actor";
+                bool exist;
+                foreach (string a in actores)
                 {
-                    command.Parameters.AddWithValue("@codPelicula", codPelicula);
-                    command.Parameters.AddWithValue("@Actor", a);
-                    exist = (int)command.ExecuteScalar() > 0;
-                }
-                if (exist == false)
-                {
-                    string insertSql = "INSERT INTO Cache_Actores(codPelicula, Actor) VALUES (@codPelicula, @Actor)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection))
                     {
                         command.Parameters.AddWithValue("@codPelicula", codPelicula);
                         command.Parameters.AddWithValue("@Actor", a);
-                        command.ExecuteNonQuery();
+                        exist = (int)command.ExecuteScalar() > 0;
+                    }
+                    if (exist == false)
+                    {
+                        string insertSql = "INSERT INTO Cache_Actores(codPelicula, Actor) VALUES (@codPelicula, @Actor)";
+                        using (var command = new SqlCommand(insertSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                            command.Parameters.AddWithValue("@Actor", a);
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarActores" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
             }
         }
 
         private static void GuardarDirectores(SqlConnection connection, int codPelicula, List<string> directores)
         {
-            if (directores == null || directores.Count == 0) return;
-
-            string checkSql = "SELECT COUNT(1) FROM Cache_Directores WHERE codPelicula = @codPelicula AND Director = @Director";
-            bool exist;
-            foreach (string d in directores)
+            try
             {
-                using (var command = new SqlCommand(checkSql, connection))
+                if (directores == null || directores.Count == 0) return;
+
+                string checkSql = "SELECT COUNT(1) FROM Cache_Directores WHERE codPelicula = @codPelicula AND Director = @Director";
+                bool exist;
+                foreach (string d in directores)
                 {
-                    command.Parameters.AddWithValue("@codPelicula", codPelicula);
-                    command.Parameters.AddWithValue("@Director", d);
-                    exist = (int)command.ExecuteScalar() > 0;
-                }
-                if (exist == false)
-                {
-                    string insertSql = "INSERT INTO Cache_Directores(codPelicula, Director) VALUES (@codPelicula, @Director)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection))
                     {
                         command.Parameters.AddWithValue("@codPelicula", codPelicula);
                         command.Parameters.AddWithValue("@Director", d);
-                        command.ExecuteNonQuery();
+                        exist = (int)command.ExecuteScalar() > 0;
+                    }
+                    if (exist == false)
+                    {
+                        string insertSql = "INSERT INTO Cache_Directores(codPelicula, Director) VALUES (@codPelicula, @Director)";
+                        using (var command = new SqlCommand(insertSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@codPelicula", codPelicula);
+                            command.Parameters.AddWithValue("@Director", d);
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
             }
-          
-        }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarDirectores" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+}
 
         private static void GuardarFunciones(SqlConnection connection, List<Cache_Funciones> funciones, int codPel)
         {
@@ -512,188 +594,227 @@ namespace CSCache.Controlador
 
         private static void GuardarTecnologia(SqlConnection connection, Cache_Tecnologias tecn)
         {
-            string checkSql = "SELECT COUNT(1) FROM Cache_Tecnologias WHERE CodTecnologia = @CodTecnologia ";
-            bool exist;
+            try
+            {
+                string checkSql = "SELECT COUNT(1) FROM Cache_Tecnologias WHERE CodTecnologia = @CodTecnologia ";
+                bool exist;
             
-                using (var command = new SqlCommand(checkSql, connection))
-                {
-                    command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
-                    exist = (int)command.ExecuteScalar() > 0;
-                }
-                if (exist == false)
-                {
-                    string insertSql = "INSERT INTO Cache_Tecnologias(CodTecnologia, NomTecnologia) VALUES (@CodTecnologia, @NomTecnologia)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection))
                     {
-                        command.Parameters.AddWithValue("@codPelicula", tecn.CodTecnologia);
-                        command.Parameters.AddWithValue("@NomTecnologia", tecn.NomTecnologia);
-                        command.ExecuteNonQuery();
+                        command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
+                        exist = (int)command.ExecuteScalar() > 0;
                     }
-                }
-        }
+                    if (exist == false)
+                    {
+                        string insertSql = "INSERT INTO Cache_Tecnologias(CodTecnologia, NomTecnologia) VALUES (@CodTecnologia, @NomTecnologia)";
+                        using (var command = new SqlCommand(insertSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@codPelicula", tecn.CodTecnologia);
+                            command.Parameters.AddWithValue("@NomTecnologia", tecn.NomTecnologia);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+            }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarTecnologia" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+}
 
         private static void GuardarCineSemana(SqlConnection connection, Complex_Options comp)
         {
-            if (comp.Cache_Cinesemanas != null)
+            try
             {
-                string checkSql = "SELECT COUNT(1) FROM Cache_Cinesemanas WHERE CodComplejo = @CodComplejo ";
-                bool exist;
-                //TODO : falta if primero 
-                using (var command = new SqlCommand(checkSql, connection))
+                if (comp.Cache_Cinesemanas != null)
                 {
-                    command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
-                    exist = (int)command.ExecuteScalar() > 0;
-                }
-                if (exist == false)
-                {
-                    string insertSql = "INSERT INTO Cache_Cinesemanas(CodComplejo, Desde, Hasta) VALUES (@CodComplejo, @Desde, @Hasta)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    string checkSql = "SELECT COUNT(1) FROM Cache_Cinesemanas WHERE CodComplejo = @CodComplejo ";
+                    bool exist;
+                
+                    using (var command = new SqlCommand(checkSql, connection))
                     {
                         command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
-                        //complex option no tiene la coneccion a cache_cinesemanas
-                        command.Parameters.AddWithValue("@Desde", comp.Cache_Cinesemanas.Desde);
-                        command.Parameters.AddWithValue("@Hasta", comp.Cache_Cinesemanas.Hasta);
-                        command.ExecuteNonQuery();
+                        exist = (int)command.ExecuteScalar() > 0;
                     }
-                }
+                    if (exist == false)
+                    {
+                        string insertSql = "INSERT INTO Cache_Cinesemanas(CodComplejo, Desde, Hasta) VALUES (@CodComplejo, @Desde, @Hasta)";
+                        using (var command = new SqlCommand(insertSql, connection))
+                        {
+                            command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
+                            command.Parameters.AddWithValue("@Desde", comp.Cache_Cinesemanas.Desde);
+                            command.Parameters.AddWithValue("@Hasta", comp.Cache_Cinesemanas.Hasta);
+                            command.ExecuteNonQuery();
+                        }
+                    }
 
-            }
-            if (comp.Cache_Cinesemanas != null)
-            {
-                /*
-                int cant = new CSWebNuevoEntities().Cache_Cinesemanas.AsNoTracking().Where(c => c.CodComplejo == comp.CodComplejo).Count();
-                if (cant == 0)
-                {
-                    db.Cache_Cinesemanas.Add(new Cache_Cinesemanas()
-                    { 
-                        CodComplejo = comp.CodComplejo,
-                        Desde = comp.Cache_Cinesemanas.Desde,
-                        Hasta = comp.Cache_Cinesemanas.Hasta
-                    });
-                    */
                     foreach (Cache_GruposSemana grupo in comp.Cache_Cinesemanas.Cache_GruposSemana)
                     {
-                        db.Cache_GruposSemana.Add(new Cache_GruposSemana()
+                        string insertCopiaSql = @"
+                                INSERT INTO Cache_GruposSemana (NomGrupo, Orden, Desde, Hasta, CodComplejo )
+                                VALUES (@NomGrupo, @Orden, @Desde, @Hasta, @CodComplejo)";
+                        using (var command = new SqlCommand(insertCopiaSql, connection))
                         {
-                            NomGrupo = grupo.NomGrupo,
-                            Orden = grupo.Orden,
-                            Desde = grupo.Desde,
-                            Hasta = grupo.Hasta,
-                            CodComplejo = comp.CodComplejo
-                        });
+                            command.Parameters.AddWithValue("@NomGrupo", grupo.NomGrupo);
+                            command.Parameters.AddWithValue("@Orden", grupo.Orden);
+                            command.Parameters.AddWithValue("@Desde", grupo.Desde);
+                            command.Parameters.AddWithValue("@Hasta", grupo.Hasta);
+                            command.Parameters.AddWithValue("@CodComplejo", grupo.CodComplejo);
+
+                            command.ExecuteNonQuery();
+                        }
                     }
 
-                    db.SaveChanges();
+                    foreach (Cache_Salas sala in comp.Cache_Salas)
+                    {
+                        GuardarSala(connection, sala, comp.CodComplejo);
+                    }
                 }
             }
-
-            foreach (Cache_Salas sala in comp.Cache_Salas)
+            catch (Exception ex)
             {
-                GuardarSala(db, sala, comp.CodComplejo);
+                GuardarLog("GuardarCineSemana" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
             }
-        }
+}
+
+           
+        
         
         private static void GuardarSala(SqlConnection connection, Cache_Salas sala, int codComp)
         {
-            string checkSql = "SELECT COUNT(1) FROM Cache_Salas WHERE CodSala = @CodSala AND CodComplejo = @CodComplejo";
-            using (var checkCommand = new SqlCommand(checkSql, connection))
+            try
             {
-                checkCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
-                checkCommand.Parameters.AddWithValue("@CodComplejo", codComp);
-                int exists = Convert.ToInt32(checkCommand.ExecuteScalar());
-
-                if (exists == 0)
+                string checkSql = "SELECT COUNT(1) FROM Cache_Salas WHERE CodSala = @CodSala AND CodComplejo = @CodComplejo";
+                using (var checkCommand = new SqlCommand(checkSql, connection))
                 {
-                    // Insert new sala
-                    string insertSql = @"
-                INSERT INTO Cache_Salas (CodSala, NomSala, CodTipoSala, NomTipoSala, CodComplejo)
-                VALUES (@CodSala, @Nombre, @CodTipoSala, @NomTipoSala, @CodComplejo)";
-                    using (var insertCommand = new SqlCommand(insertSql, connection))
+                    checkCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
+                    checkCommand.Parameters.AddWithValue("@CodComplejo", codComp);
+                    int exists = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+                    if (exists == 0)
                     {
-                        insertCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
-                        insertCommand.Parameters.AddWithValue("@Nombre", sala.NomSala);
-                        insertCommand.Parameters.AddWithValue("@CodTipoSala", sala.CodTipoSala);
-                        insertCommand.Parameters.AddWithValue("@NomTipoSala", sala.NomTipoSala);
-                        insertCommand.Parameters.AddWithValue("@CodComplejo", codComp);
-                        insertCommand.ExecuteNonQuery();
+                        // Insert new sala
+                        string insertSql = @"
+                    INSERT INTO Cache_Salas (CodSala, NomSala, CodTipoSala, NomTipoSala, CodComplejo)
+                    VALUES (@CodSala, @NomSala, @CodTipoSala, @NomTipoSala, @CodComplejo)";
+                        using (var insertCommand = new SqlCommand(insertSql, connection))
+                        {
+                            insertCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
+                            insertCommand.Parameters.AddWithValue("@Nombre", sala.NomSala);
+                            insertCommand.Parameters.AddWithValue("@CodTipoSala", sala.CodTipoSala);
+                            insertCommand.Parameters.AddWithValue("@NomTipoSala", sala.NomTipoSala);
+                            insertCommand.Parameters.AddWithValue("@CodComplejo", codComp);
+
+                            insertCommand.ExecuteNonQuery();
+                        }
                     }
                 }
             }
-        }
-
-        private static void GuardarDatosFuncion(CSWebNuevoEntities db, Cache_Funciones func, int codPel)
-        {
-            func.CodComplejo = func.Complex_Options.CodComplejo;
-            func.CodSala = func.Cache_Salas.CodSala;
-            func.CodTecnologia = func.Cache_Tecnologias.CodTecnologia;
-            func.CodPelicula = codPel;
-            db.Cache_Funciones.Add(func);
-            db.SaveChanges();
-        }
-
-private static void GuardarDatosFuncion(Cache_Funciones func, int codPel)
-{
-    using (var connection = new SqlConnection(ConnectionString))
-    {
-        connection.Open();
-
-        func.CodComplejo = func.Complejos?.CodComplejo ?? func.CodComplejo;
-        func.CodSala = func.CodSala;
-        func.CodTecnologia = func.CodTecnologia;
-        func.CodPelicula = codPel;
-
-        string sql = @"
-            INSERT INTO Cache_Funciones (
-                CodFuncion, CodComplejo, HoraComienzo, Vuelta, Estado, Preestreno, 
-                ButacasDisponibles, ButacasHabilitadas, CodDistribucion, Fecha, 
-                CodSala, CodTecnologia, CodPelicula, CodCopia
-            )
-            VALUES (
-                @CodFuncion, @CodComplejo, @HoraComienzo, @Vuelta, @Estado, @Preestreno, 
-                @ButacasDisponibles, @ButacasHabilitadas, @CodDistribucion, @Fecha, 
-                @CodSala, @CodTecnologia, @CodPelicula, @CodCopia
-            )";
-        using (var command = new SqlCommand(sql, connection))
-        {
-            command.Parameters.AddWithValue("@CodFuncion", func.CodFuncion);
-            command.Parameters.AddWithValue("@CodComplejo", func.CodComplejo);
-            command.Parameters.AddWithValue("@HoraComienzo", func.HoraComienzo ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@Vuelta", func.Vuelta);
-            command.Parameters.AddWithValue("@Estado", func.Estado ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@Preestreno", func.Preestreno);
-            command.Parameters.AddWithValue("@ButacasDisponibles", func.ButacasDisponibles);
-            command.Parameters.AddWithValue("@ButacasHabilitadas", func.ButacasHabilitadas);
-            command.Parameters.AddWithValue("@CodDistribucion", func.CodDistribucion);
-            command.Parameters.AddWithValue("@Fecha", func.Fecha);
-            command.Parameters.AddWithValue("@CodSala", func.CodSala);
-            command.Parameters.AddWithValue("@CodTecnologia", func.CodTecnologia);
-            command.Parameters.AddWithValue("@CodPelicula", func.CodPelicula);
-            command.Parameters.AddWithValue("@CodCopia", func.CodCopia ?? (object)DBNull.Value);
-
-            command.ExecuteNonQuery();
-        }
-    }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarSala" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
 }
+
+    private static void GuardarDatosFuncion(SqlConnection connection, Cache_Funciones func, int codPel)
+    {
+            try
+            {
+                func.CodComplejo = func.Complex_Options.CodComplejo;
+                func.CodSala = func.Cache_Salas.CodSala;
+                func.CodTecnologia = func.Cache_Tecnologias.CodTecnologia;
+                func.CodPelicula = codPel;
+
+                string sql = @"
+                    INSERT INTO Cache_Funciones (
+                        CodFuncion, CodComplejo, HoraComienzo, Vuelta, Estado, Preestreno, 
+                        ButacasDisponibles, ButacasHabilitadas, CodDistribucion, Fecha, 
+                        CodSala, CodTecnologia, CodPelicula, CodCopia
+                    )
+                    VALUES (
+                        @CodFuncion, @CodComplejo, @HoraComienzo, @Vuelta, @Estado, @Preestreno, 
+                        @ButacasDisponibles, @ButacasHabilitadas, @CodDistribucion, @Fecha, 
+                        @CodSala, @CodTecnologia, @CodPelicula, @CodCopia
+                    )";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodFuncion", func.CodFuncion);
+                    command.Parameters.AddWithValue("@CodComplejo", func.CodComplejo);
+                    command.Parameters.AddWithValue("@HoraComienzo", func.HoraComienzo ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Vuelta", func.Vuelta);
+                    command.Parameters.AddWithValue("@Estado", func.Estado ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Preestreno", func.Preestreno);
+                    command.Parameters.AddWithValue("@ButacasDisponibles", func.ButacasDisponibles);
+                    command.Parameters.AddWithValue("@ButacasHabilitadas", func.ButacasHabilitadas);
+                    command.Parameters.AddWithValue("@CodDistribucion", func.CodDistribucion);
+                    command.Parameters.AddWithValue("@Fecha", func.Fecha);
+                    command.Parameters.AddWithValue("@CodSala", func.CodSala);
+                    command.Parameters.AddWithValue("@CodTecnologia", func.CodTecnologia);
+                    command.Parameters.AddWithValue("@CodPelicula", func.CodPelicula);
+                    command.Parameters.AddWithValue("@CodCopia", func.CodCopia ?? (object)DBNull.Value);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarDatosFuncion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+        }
 
         public static void GuardarCacheProductos(List<Cache_Productos> list, DateTime fecha)
         {
             GuardarLog("GuardarCacheProductos Inicio list.Count: " + list.Count, 1002, "DAO.cs");
 
-            using (CSWebNuevoEntities db = new CSWebNuevoEntities())
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    db.Cache_Productos.RemoveRange(db.Cache_Productos.ToList());
-                    db.SaveChanges();
+                    connection.Open();
+
+                    using (var command = new SqlCommand($"DELETE FROM Cache_Productos", connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                        string sql = @"
+                    INSERT INTO Cache_Productos (
+                        CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo, 
+                    )
+                    VALUES (
+                        @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
+                    )";
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        foreach (var lista in list)
+                        {
+                            command.Parameters.AddWithValue("@CodProducto", lista.CodProducto);
+                            command.Parameters.AddWithValue("@CodComplejo", lista.CodComplejo);
+                            command.Parameters.AddWithValue("@NomProducto", lista.NomProducto);
+                            command.Parameters.AddWithValue("@Precio", lista.Precio ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@Posicion", lista.Posicion);
+                            command.Parameters.AddWithValue("@NombreArchivo", lista.NombreArchivo); ;
+
+                            command.ExecuteNonQuery();
+                        }
+                    }
 
                     foreach (Cache_Productos prod in list)
                     {
-                        GuardarProducto(db, prod);
+                        GuardarProducto(connection, prod);
                     }
 
-                    Caches cache = db.Caches.AsNoTracking().Single(c => c.IdCache == "Productos");
-                    cache.FechaInicio = fecha;
-                    db.SaveChanges();
+                    string updateCacheSql = @"
+                        UPDATE Caches 
+                        SET FechaInicio = @Fecha 
+                        WHERE IdCache = 'Productos'";
+                    using (var command = new SqlCommand(updateCacheSql, connection))
+                    {
+                        command.Parameters.AddWithValue("@Fecha", fecha);
+                        command.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -705,10 +826,35 @@ private static void GuardarDatosFuncion(Cache_Funciones func, int codPel)
             GuardarLog("GuardarCacheProductos Fin", 1002, "DAO.cs");
         }
 
-        private static void GuardarProducto(CSWebNuevoEntities db, Cache_Productos prod)
+        private static void GuardarProducto(SqlConnection connection, Cache_Productos prod)
         {
-            db.Cache_Productos.Add(prod);
-            db.SaveChanges();
+            try
+            {
+                string sql = @"
+            INSERT INTO Cache_Productos (
+                CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo, 
+            )
+            VALUES (
+                @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
+            )";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@CodProducto", prod.CodProducto);
+                    command.Parameters.AddWithValue("@CodComplejo", prod.CodComplejo);
+                    command.Parameters.AddWithValue("@NomProducto", prod.NomProducto);
+                    command.Parameters.AddWithValue("@Precio", prod.Precio ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Posicion", prod.Posicion);
+                    command.Parameters.AddWithValue("@NombreArchivo", prod.NombreArchivo); ;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                GuardarLog("GuardarProducto " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw ex;
+            }
+
         }
     }
 }
