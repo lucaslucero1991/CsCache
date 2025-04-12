@@ -805,14 +805,13 @@ namespace CSCache.Controlador
                     }
                         string sql = @"
                     INSERT INTO Cache_Productos (
-                        CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo, 
-                    )
+                        CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo)
                     VALUES (
                         @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
                     )";
-                    using (var command = new SqlCommand(sql, connection))
+                    foreach (var lista in list)
                     {
-                        foreach (var lista in list)
+                        using (var command = new SqlCommand(sql, connection))
                         {
                             command.Parameters.AddWithValue("@CodProducto", lista.CodProducto);
                             command.Parameters.AddWithValue("@CodComplejo", lista.CodComplejo);
@@ -854,31 +853,49 @@ namespace CSCache.Controlador
         {
             try
             {
-                string sql = @"
-            INSERT INTO Cache_Productos (
-                CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo, 
-            )
-            VALUES (
-                @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
-            )";
-                using (var command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@CodProducto", prod.CodProducto);
-                    command.Parameters.AddWithValue("@CodComplejo", prod.CodComplejo);
-                    command.Parameters.AddWithValue("@NomProducto", prod.NomProducto);
-                    command.Parameters.AddWithValue("@Precio", prod.Precio ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Posicion", prod.Posicion);
-                    command.Parameters.AddWithValue("@NombreArchivo", prod.NombreArchivo); ;
+                string checkExistsSql = @"
+                    SELECT COUNT(1)
+                    FROM Cache_Productos
+                    WHERE CodProducto = @CodProducto AND CodComplejo = @CodComplejo";
 
-                    command.ExecuteNonQuery();
+                using (var checkCommand = new SqlCommand(checkExistsSql, connection))
+                {
+                    checkCommand.Parameters.AddWithValue("@CodProducto", prod.CodProducto);
+                    checkCommand.Parameters.AddWithValue("@CodComplejo", prod.CodComplejo);
+                    int count = (int)checkCommand.ExecuteScalar();
+
+                    if (count == 0)
+                    {
+                        string sql = @"
+                    INSERT INTO Cache_Productos (
+                        CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo
+                    )
+                    VALUES (
+                        @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
+                    )";
+                        using (var command = new SqlCommand(sql, connection))
+                        {
+                            command.Parameters.AddWithValue("@CodProducto", prod.CodProducto);
+                            command.Parameters.AddWithValue("@CodComplejo", prod.CodComplejo);
+                            command.Parameters.AddWithValue("@NomProducto", prod.NomProducto ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@Precio", prod.Precio ?? (object)DBNull.Value);
+                            command.Parameters.AddWithValue("@Posicion", prod.Posicion);
+                            command.Parameters.AddWithValue("@NombreArchivo", prod.NombreArchivo ?? (object)DBNull.Value);
+
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        GuardarLog($"Producto con CodProducto={prod.CodProducto} y CodComplejo={prod.CodComplejo} ya existe, no se insertó.", 1002, "DAO.cs");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                GuardarLog("GuardarProducto " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
-                throw ex;
+                GuardarLog("GuardarProducto Error: " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                throw;
             }
-
         }
     }
 }

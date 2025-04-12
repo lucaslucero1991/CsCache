@@ -61,6 +61,36 @@ namespace CSCache.Controlador
             newThread2.Start();
         }
 
+        public static void InitCache()
+        {
+            Thread peliculasThread = new Thread(() =>
+            {
+                try
+                {
+                    InitCachePeliculas2();
+                }
+                catch (Exception ex)
+                {
+                    DAO.GuardarLog($"InitCachePeliculas2 en hilo falló: {ex.ToString()} {ex.StackTrace}", 1001, "Controlador.cs");
+                }
+            });
+
+            Thread productosThread = new Thread(() =>
+            {
+                try
+                {
+                    InitCacheProductos2();
+                }
+                catch (Exception ex)
+                {
+                    DAO.GuardarLog($"InitCacheProductos2 en hilo falló: {ex.ToString()} {ex.StackTrace}", 1001, "Controlador.cs");
+                }
+            });
+
+            peliculasThread.Start();
+            productosThread.Start();
+        }
+
         public static void InitCachePeliculas2()
         {
             // DAO.GuardarLog("InitCachePeliculas2 INICIO", 1003, "Controlador.cs");
