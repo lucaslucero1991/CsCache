@@ -1,39 +1,39 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
+using System.Configuration;
 using System.Collections.Generic;
+using System.Linq;
 using CSCache.Model;
 
 namespace CSCache.Controlador
 {
     public class DAO : IDisposable
     {
-        private static string connectionString = 
-            "Server=192.168.0.230,1453;Database=CMS_Atlas;User Id=ext_free;Password=D3v_Fr33_SQL14#;";
+        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["CMS_AtlasConnection"].ConnectionString;
         private readonly SqlConnection _sharedConnection;
 
         public DAO()
         {
             _sharedConnection = new SqlConnection(connectionString);
         }
-        
+
         public void Dispose()
         {
             _sharedConnection?.Dispose();
         }
-        
+
         public static DateTime ObtenerFechaCache(string id)
         {
-            using (var connection = new SqlConnection())
+            using (var connection = new SqlConnection(connectionString))
             {
                 try
                 {
                     connection.Open();
-                    Console.WriteLine("Conexión exitosa a la base de datos 'cache'");
-                    string sql = "SELECT Top 1 FechaInicio FROM caches WHERE IdCache = " + id;
+                    string sql = "SELECT Top 1 FechaInicio FROM caches WHERE IdCache = @IdCache";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@IdCache", id);
                         var result = command.ExecuteScalar();
                         if (result != null)
                         {
@@ -47,12 +47,12 @@ namespace CSCache.Controlador
                 {
                     GuardarLog("DAO.ObtenerFechaCache " + ex.ToString(), 1004, "DAO.cs");
                     return DateTime.Now;
-                }  
+                }
             }
 
         }
 
-        public static string ObtenerWsInfo()
+    public static string ObtenerWsInfo()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -115,11 +115,12 @@ namespace CSCache.Controlador
                 {
                     connection.Open();
                     
-                    string sql = "SELECT  ParamValue FROM Parametros WHERE ParamKey = " + key;
+                    string sql = "SELECT ParamValue FROM Parametros WHERE ParamKey = @Key";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        var result = command.ExecuteScalar().ToString();
+                        command.Parameters.AddWithValue("@Key", key);
+                        var result = command.ExecuteScalar().ToString();    
                         return result;
                     }
                 }
@@ -168,7 +169,7 @@ namespace CSCache.Controlador
                 {
                     connection.Open();
                     List<Complex_Options> complejos = new List<Complex_Options>();
-                    string sql = "SELECT CodComplejo, CodTerminal, Nombre, Email, PassEmail, SMTPServer, EnableSSL, PortNumber, GoogleAnalytics, Allow_Sale, Allow_ConcessionSale, Request_TaxId, Tolerancia,MaxSales, Hourly, ComplexDetails, Request_MinRangeTax, Request_MaxRangeTax, Barcode,PickupCode, AuxEmail, AuxSMTPServer, AuxPort, AuxPassword, AuxEnableSSL, MinimunSeatToSell, Allow_Refund FROM Complex_Options";
+                    string sql = "SELECT CodComplejo, CodTerminal, Nombre, Email, PassEmail, SMTPServer, EnableSSL, PortNumber, GoogleAnalytics, Allow_Sale, Allow_ConcessionSale, Request_TaxId, Tolerancia,MaxSales, Hourly, ComplexDetails, Request_MinRangeTax, Request_MaxRangeTax, Barcode,PickupCode, AuxEmail, AuxSMTPServer, AuxPort, AuxPassword, AuxEnableSSL, MinimunSeatToSell, Allow_Refund, Direccion FROM Complex_Options";
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -178,37 +179,38 @@ namespace CSCache.Controlador
                                 var complejo = new Complex_Options();
                                 complejo.CodComplejo = reader.GetInt32(0);
                                 complejo.CodTerminal = reader.GetInt32(1);
-                                complejo.Nombre = reader.GetString(2);
-                                complejo.Email = reader.GetString(3);
-                                complejo.PassEmail = reader.GetString(4);
-                                complejo.SMTPServer = reader.GetString(5);
-                                complejo.EnableSSL = reader.GetBoolean(6); //reader.IsDBNull(6) ? null : reader.GetBoolean(6);
-                                complejo.PortNumber = reader.GetString(7);
-                                complejo.GoogleAnalytics = reader.GetString(8);
+                                complejo.Nombre = reader.IsDBNull(2) ? null : reader.GetString(2);
+                                complejo.Email = reader.IsDBNull(3) ? null : reader.GetString(3);
+                                complejo.PassEmail = reader.IsDBNull(4) ? null : reader.GetString(4);
+                                complejo.SMTPServer = reader.IsDBNull(5) ? null : reader.GetString(5);
+                                complejo.EnableSSL = reader.IsDBNull(6) ? (bool?)null : reader.GetBoolean(6);
+                                complejo.PortNumber = reader.IsDBNull(7) ? null : reader.GetString(7);
+                                complejo.GoogleAnalytics = reader.IsDBNull(8) ? null : reader.GetString(8);
                                 complejo.Allow_Sale = reader.GetBoolean(9);
                                 complejo.Allow_ConcessionSale = reader.GetBoolean(10);
-                                complejo.Request_TaxId = reader.GetBoolean(11);
-                                complejo.Tolerancia = reader.GetInt32(12);
-                                complejo.MaxSales = reader.GetInt32(13);
-                                complejo.Hourly = reader.GetString(14);
-                                complejo.ComplexDetails = reader.GetString(15);
-                                complejo.Request_MinRangeTax = reader.GetInt32(16);
-                                complejo.Request_MaxRangeTax = reader.GetInt32(17);
-                                complejo.Barcode = reader.GetString(18);
-                                complejo.PickupCode = reader.GetInt32(19);
-                                complejo.AuxEmail = reader.GetString(20);
-                                complejo.AuxSMTPServer = reader.GetString(21);
-                                complejo.AuxPort = reader.GetInt32(22);
-                                complejo.AuxPassword = reader.GetString(23);
-                                complejo.AuxEnableSSL = reader.GetBoolean(24);
-                                complejo.MinimunSeatToSell = reader.GetInt32(25);
-                                complejo.Allow_Refund = reader.GetBoolean(26);
-                                complejo.Direccion = reader.GetString(27);
+                                complejo.Request_TaxId = reader.IsDBNull(11) ? (bool?)null : reader.GetBoolean(11);
+                                complejo.Tolerancia = reader.IsDBNull(12) ? (int?)null : reader.GetInt32(12);
+                                complejo.MaxSales = reader.IsDBNull(13) ? (int?)null : reader.GetInt32(13);
+                                complejo.Hourly = reader.IsDBNull(14) ? null : reader.GetString(14);
+                                complejo.ComplexDetails = reader.IsDBNull(15) ? null : reader.GetString(15);
+                                complejo.Request_MinRangeTax = reader.IsDBNull(16) ? (int?)null : reader.GetInt32(16);
+                                complejo.Request_MaxRangeTax = reader.IsDBNull(17) ? (int?)null : reader.GetInt32(17);
+                                complejo.Barcode = reader.IsDBNull(18) ? null : reader.GetString(18);
+                                complejo.PickupCode = reader.IsDBNull(19) ? (int?)null : reader.GetInt32(19);
+                                complejo.AuxEmail = reader.IsDBNull(20) ? null : reader.GetString(20);
+                                complejo.AuxSMTPServer = reader.IsDBNull(21) ? null : reader.GetString(21);
+                                complejo.AuxPort = reader.IsDBNull(22) ? (int?)null : reader.GetInt32(22);
+                                complejo.AuxPassword = reader.IsDBNull(23) ? null : reader.GetString(23);
+                                complejo.AuxEnableSSL = reader.IsDBNull(24) ? (bool?)null : reader.GetBoolean(24);
+                                complejo.MinimunSeatToSell = reader.IsDBNull(25) ? (int?)null : reader.GetInt32(25);
+                                complejo.Allow_Refund = reader.IsDBNull(26) ? (bool?)null : reader.GetBoolean(26);
+                                complejo.Direccion = reader.IsDBNull(27) ? null : reader.GetString(27);
                                 complejo.Cache_Salas = new List<Cache_Salas>();
+                                complejo.Cache_Cinesemanas = new Cache_Cinesemanas();
 
                                 complejos.Add(complejo);
                             }
-                           return complejos;
+                            return complejos;
                         }
                     }
                 }
@@ -436,7 +438,7 @@ namespace CSCache.Controlador
                 GuardarLog("GuardarGenero" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
                 throw ex;
             }
-}
+        }
 
         private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng)
         {
@@ -614,7 +616,7 @@ namespace CSCache.Controlador
                         string insertSql = "INSERT INTO Cache_Tecnologias(CodTecnologia, NomTecnologia) VALUES (@CodTecnologia, @NomTecnologia)";
                         using (var command = new SqlCommand(insertSql, connection))
                         {
-                            command.Parameters.AddWithValue("@codPelicula", tecn.CodTecnologia);
+                            command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
                             command.Parameters.AddWithValue("@NomTecnologia", tecn.NomTecnologia);
                             command.ExecuteNonQuery();
                         }
@@ -625,7 +627,7 @@ namespace CSCache.Controlador
                 GuardarLog("GuardarTecnologia" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
                 throw ex;
             }
-}
+        }
 
         private static void GuardarCineSemana(SqlConnection connection, Complex_Options comp)
         {
@@ -653,20 +655,37 @@ namespace CSCache.Controlador
                         }
                     }
 
-                    foreach (Cache_GruposSemana grupo in comp.Cache_Cinesemanas.Cache_GruposSemana)
+                    foreach (var grupo in comp.Cache_Cinesemanas.Cache_GruposSemana)
                     {
-                        string insertCopiaSql = @"
-                                INSERT INTO Cache_GruposSemana (NomGrupo, Orden, Desde, Hasta, CodComplejo )
-                                VALUES (@NomGrupo, @Orden, @Desde, @Hasta, @CodComplejo)";
-                        using (var command = new SqlCommand(insertCopiaSql, connection))
-                        {
-                            command.Parameters.AddWithValue("@NomGrupo", grupo.NomGrupo);
-                            command.Parameters.AddWithValue("@Orden", grupo.Orden);
-                            command.Parameters.AddWithValue("@Desde", grupo.Desde);
-                            command.Parameters.AddWithValue("@Hasta", grupo.Hasta);
-                            command.Parameters.AddWithValue("@CodComplejo", grupo.CodComplejo);
+                        string checkExistsSql = @"
+                            SELECT COUNT(1)
+                            FROM Cache_GruposSemana
+                            WHERE Orden = @Orden AND CodComplejo = @CodComplejo";
 
-                            command.ExecuteNonQuery();
+                        using (var checkCommand = new SqlCommand(checkExistsSql, connection))
+                        {
+                            checkCommand.Parameters.AddWithValue("@Orden", grupo.Orden);
+                            checkCommand.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
+
+                            int count = (int)checkCommand.ExecuteScalar();
+
+                            if (count == 0)
+                            {
+                                string insertCopiaSql = @"
+                                    INSERT INTO Cache_GruposSemana (NomGrupo, Orden, Desde, Hasta, CodComplejo)
+                                    VALUES (@NomGrupo, @Orden, @Desde, @Hasta, @CodComplejo)";
+
+                                using (var insertCommand = new SqlCommand(insertCopiaSql, connection))
+                                {
+                                    insertCommand.Parameters.AddWithValue("@NomGrupo", grupo.NomGrupo);
+                                    insertCommand.Parameters.AddWithValue("@Orden", grupo.Orden);
+                                    insertCommand.Parameters.AddWithValue("@Desde", grupo.Desde);
+                                    insertCommand.Parameters.AddWithValue("@Hasta", grupo.Hasta);
+                                    insertCommand.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
+
+                                    insertCommand.ExecuteNonQuery();
+                                }
+                            }
                         }
                     }
 
@@ -706,7 +725,7 @@ namespace CSCache.Controlador
                         using (var insertCommand = new SqlCommand(insertSql, connection))
                         {
                             insertCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
-                            insertCommand.Parameters.AddWithValue("@Nombre", sala.NomSala);
+                            insertCommand.Parameters.AddWithValue("@NomSala", sala.NomSala);
                             insertCommand.Parameters.AddWithValue("@CodTipoSala", sala.CodTipoSala);
                             insertCommand.Parameters.AddWithValue("@NomTipoSala", sala.NomTipoSala);
                             insertCommand.Parameters.AddWithValue("@CodComplejo", codComp);
