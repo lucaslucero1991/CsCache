@@ -311,9 +311,15 @@ namespace CSCache.Controlador
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                SqlTransaction transaction = null;
+
                 try
                 {
                     connection.Open();
+                    
+                    // Iniciar la transacción
+                    transaction = connection.BeginTransaction();
+
                     // Paso 1: Eliminar datos existentes de las tablas
                     string[] tablesToClear = {
                         "Cache_Actores", "Cache_Directores", "Cache_Funciones", "Cache_GruposSemana",
@@ -361,9 +367,14 @@ namespace CSCache.Controlador
                         command.Parameters.AddWithValue("@Fecha", fecha);
                         command.ExecuteNonQuery();
                     }
+
+                    // Si todo sale bien, confirmamos la transacción
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
+                    // Si hay un error, deshacemos los cambios
+                    transaction?.Rollback();
                     GuardarLog("GuardarCache " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
                     throw ex;
                 }
