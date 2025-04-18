@@ -6,6 +6,18 @@ obj/
 *.userosscache
 *.sln.docstates
 
+# Ignorar archivos de IntelliJ IDEA
+.idea/
+
+# Ignorar archivos de Visual Studio
+.vs/
+*.vsidx
+*.suo
+*.user
+
+# Ignorar archivos de respaldo de Visual Studio
+*.backup.json
+
 # Ignorar paquetes de NuGet
 packages/
 *.nupkg

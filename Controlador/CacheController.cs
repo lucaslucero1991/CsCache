@@ -61,6 +61,36 @@ namespace CSCache.Controlador
             newThread2.Start();
         }
 
+        public static void InitCache()
+        {
+            Thread peliculasThread = new Thread(() =>
+            {
+                try
+                {
+                    InitCachePeliculas2();
+                }
+                catch (Exception ex)
+                {
+                    DAO.GuardarLog($"InitCachePeliculas2 en hilo falló: {ex.ToString()} {ex.StackTrace}", 1001, "Controlador.cs");
+                }
+            });
+
+            Thread productosThread = new Thread(() =>
+            {
+                try
+                {
+                    InitCacheProductos2();
+                }
+                catch (Exception ex)
+                {
+                    DAO.GuardarLog($"InitCacheProductos2 en hilo falló: {ex.ToString()} {ex.StackTrace}", 1001, "Controlador.cs");
+                }
+            });
+
+            peliculasThread.Start();
+            productosThread.Start();
+        }
+
         public static void InitCachePeliculas2()
         {
             // DAO.GuardarLog("InitCachePeliculas2 INICIO", 1003, "Controlador.cs");
@@ -106,7 +136,7 @@ namespace CSCache.Controlador
                                 com.Cache_Cinesemanas = new Cache_Cinesemanas();
                                 com.Cache_Cinesemanas.Desde = DateTime.ParseExact(nodoSemanas.ChildNodes[0]["DateFrom"].InnerText, "yyyyMMdd", null);
                                 com.Cache_Cinesemanas.Hasta = DateTime.ParseExact(nodoSemanas.ChildNodes[0]["DateTo"].InnerText, "yyyyMMdd", null);
-                                com.Cache_Cinesemanas.Cache_GruposSemanas = new List<Cache_GruposSemana>();
+                                com.Cache_Cinesemanas.Cache_GruposSemana = new List<Cache_GruposSemana>();
                                 while (nodoSemanas.ChildNodes[0]["WeekGroup"] != null)
                                 {
                                     Cache_GruposSemana gs = new Cache_GruposSemana();
@@ -115,7 +145,7 @@ namespace CSCache.Controlador
                                     gs.NomGrupo = nodoSemanas.ChildNodes[0]["WeekGroup"]["Name"].InnerText;
                                     gs.Orden = Convert.ToInt32(nodoSemanas.ChildNodes[0]["WeekGroup"]["Order"].InnerText);
                                     nodoSemanas.ChildNodes[0].RemoveChild(nodoSemanas.ChildNodes[0]["WeekGroup"]);
-                                    com.Cache_Cinesemanas.Cache_GruposSemanas.Add(gs);
+                                    com.Cache_Cinesemanas.Cache_GruposSemana.Add(gs);
                                 }
                             }
                         }
@@ -349,8 +379,8 @@ namespace CSCache.Controlador
                                 {
                                     try
                                     {
-                                        var context = new CSWebNuevoEntities();
-                                        var deviceImageSettings = context.DeviceImageSettings.ToList();
+                                        
+                                        var deviceImageSettings = DAO.ConfiguracionesDispositivosImagenes();
                                         var poster = DeviceImageSettingsResolution.Poster.ToString();
                                         var posterImgSettings = deviceImageSettings.Single(x => x.ImageTypeCode.Trim() == poster);
 

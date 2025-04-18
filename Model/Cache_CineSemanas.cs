@@ -5,12 +5,11 @@ using System.Web;
 
 namespace CSCache.Model
 {
-    public class Cache_GruposSemana
+    public class Cache_Cinesemanas
     {
-        public string NomGrupo { get; set; }
-        public int Orden { get; set; }
+        public int CodComplejo { get; set; }
         public System.DateTime Desde { get; set; }
         public System.DateTime Hasta { get; set; }
-        public int CodComplejo { get; set; }
+        public List<Cache_GruposSemana> Cache_GruposSemana { get; set; }
     }
 }

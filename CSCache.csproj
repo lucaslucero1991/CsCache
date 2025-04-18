@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -46,12 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="ImageResizer, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ImageResizer.4.2.8\lib\net45\ImageResizer.dll</HintPath>
     </Reference>
@@ -61,8 +54,12 @@
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.DataSetExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
@@ -117,6 +114,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Cache\CacheProcessor.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -138,16 +136,6 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Model\CSWebModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>CSWebModel.edmx</DependentUpon>
-      <LastGenOutput>CSWebModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Model\CSWebModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>CSWebModel.edmx</DependentUpon>
-      <LastGenOutput>CSWebModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -176,13 +164,6 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <EntityDeploy Include="Model\CSWebModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>CSWebModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Model\CSWebModel.edmx.diagram">
-      <DependentUpon>CSWebModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Properties\DataSources\System.Data.DataSet.datasource" />
     <Content Include="Properties\DataSources\System.Xml.XmlNode.datasource" />
     <None Include="Properties\Settings.settings">
@@ -239,7 +220,7 @@
       <DependentUpon>CacheProcessor.aspx</DependentUpon>
     </Compile>
     <Compile Include="Controlador\CacheController.cs" />
-    <Compile Include="Controlador\DAO.cs" />
+    <Compile Include="Data_Access\DAO.cs" />
     <Compile Include="Controlador\MovieController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -251,227 +232,23 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Model\AgenteVenta.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\AgentTransactions.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Model\AppEnumerations.cs" />
-    <Compile Include="Model\AspNetRoles.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\AspNetUserClaims.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\AspNetUserLogins.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\AspNetUsers.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\banners.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Barcodes.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\BlockbusterMovies.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Caches.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Actores.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Cinesemanas.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Clasificaciones.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_ComplejosGeo.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_CopiasPelicula.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Directores.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Funciones.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Generos.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_GruposSemana.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_KeyLayouts.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Lenguajes.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Peliculas.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Productos.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Salas.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Cache_Tecnologias.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Card.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Clients_Loyalty.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Complejos.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ComplejosAux.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ComplexImages.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Complex_Options.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ComprasInfo.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\contents.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\CSWebModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CSWebModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\CSWebModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\CSWebModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CSWebModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Model\C__MigrationHistory.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\DeviceImageSettings.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Model\Caches.cs" />
+    <Compile Include="Model\Cache_Cinesemanas.cs" />
+    <Compile Include="Model\Cache_Funciones.cs" />
+    <Compile Include="Model\Cache_GruposSemana.cs" />
+    <Compile Include="Model\Cache_Lenguajes.cs" />
+    <Compile Include="Model\Cache_Productos.cs" />
+    <Compile Include="Model\Cache_Salas.cs" />
+    <Compile Include="Model\Cache_Peliculas.cs" />
+    <Compile Include="Model\Cache_CopiasPelicula.cs" />
+    <Compile Include="Model\Cache_ComplejosGeo.cs" />
+    <Compile Include="Model\Cache_Clasificaciones.cs" />
+    <Compile Include="Model\Cache_Generos.cs" />
+    <Compile Include="Model\Cache_Tecnologias.cs" />
+    <Compile Include="Model\Complex_Options.cs" />
+    <Compile Include="Model\DeviceImageSettings.cs" />
     <Compile Include="Model\Feature.cs" />
-    <Compile Include="Model\GeneralEmail.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\HomePageFooterItems.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\HomePopups.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ImagenesComplejos.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\languages.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\LogAdmin.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\LogAgent.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\LogWeb.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Pages.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Parametros.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\PaymentCards.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\PaymentServices.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Poster.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Prom_CondPaymentsCards.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Prom_CondPaymentsServices.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Prom_PromConditions.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Prom_Promotions.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Prom_TicketCondition.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Recomendadas.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Registro_Links.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\SectionGroups.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\sliders.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Statistic_Event.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Statistic_Log.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\sysdiagrams.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\templates.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Theaters.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\translations.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\users.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\VentaCinestar.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Ventas.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\web_site_options.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\web_site_sections.cs">
-      <DependentUpon>CSWebModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -571,10 +348,7 @@
       <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
   </Target>
-  <Import Project="packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
