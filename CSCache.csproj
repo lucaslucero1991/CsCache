@@ -221,7 +221,6 @@
     </Compile>
     <Compile Include="Controlador\CacheController.cs" />
     <Compile Include="Data_Access\DAO.cs" />
-    <Compile Include="Controlador\MovieController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
