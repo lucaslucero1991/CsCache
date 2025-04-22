@@ -80,8 +80,8 @@ namespace CSCache.Controlador
                 }
             });
 
-            peliculasThread.Start();
-            productosThread.Start();
+           peliculasThread.Start();
+           productosThread.Start();
         }
 
         public static void InitCachePeliculas2()

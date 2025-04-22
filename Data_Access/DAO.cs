@@ -50,7 +50,7 @@ namespace CSCache.Controlador
             }
         }
 
-        public static void ActualizarCacheProceso(string idCache, string estado, int? detalle, string informe, DateTime? horaFin = null)
+        public static void ActualizarCacheProceso(string idCache, string estado, int? detalle, string informe, DateTime? FechaFin = null)
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -59,8 +59,8 @@ namespace CSCache.Controlador
                     connection.Open();
                     string sql = @"
                         UPDATE Caches
-                        SET Estado = @Estado, Detalle = @Detalle, Informe = @Informe, HoraFin = @HoraFin
-                        WHERE ID = @ID";
+                        SET Estado = @Estado, Detalle = @Detalle, Informe = @Informe, FechaFin = @FechaFin
+                        WHERE IdCache = @ID";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
@@ -68,7 +68,7 @@ namespace CSCache.Controlador
                         command.Parameters.AddWithValue("@Estado", estado);
                         command.Parameters.AddWithValue("@Detalle", detalle ?? (object)DBNull.Value);
                         command.Parameters.AddWithValue("@Informe", informe ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@HoraFin", horaFin ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@FechaFin", FechaFin ?? (object)DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -846,7 +846,7 @@ namespace CSCache.Controlador
 
                     string updateCacheSql = @"
                 UPDATE Caches 
-                SET HoraInicio = @Fecha 
+                SET FechaInicio = @Fecha 
                 WHERE IdCache = 'Productos'";
                     using (var command = new SqlCommand(updateCacheSql, connection))
                     {
