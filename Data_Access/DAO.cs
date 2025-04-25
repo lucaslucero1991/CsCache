@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Collections.Generic;
-using System.Linq;
 using CSCache.Model;
 
 namespace CSCache.Controlador
@@ -29,7 +28,7 @@ namespace CSCache.Controlador
                 try
                 {
                     connection.Open();
-                    string sql = "SELECT Top 1 FechaInicio FROM caches WHERE IdCache = @IdCache";
+                    string sql = "SELECT TOP 1 FechaInicio FROM Caches WHERE IdCache = @IdCache";
 
                     using (var command = new SqlCommand(sql, connection))
                     {
@@ -45,14 +44,43 @@ namespace CSCache.Controlador
                 }
                 catch (Exception ex)
                 {
-                    GuardarLog("DAO.ObtenerFechaCache " + ex.ToString(), 1004, "DAO.cs");
+                    ActualizarCacheProceso(id,"Iniciado", 0, $"Error en ObtenerFechaCache: {ex.Message}", DateTime.Now);
                     return DateTime.Now;
                 }
             }
-
         }
 
-    public static string ObtenerWsInfo()
+        public static void ActualizarCacheProceso(string idCache, string estado, int? detalle, string informe, DateTime? FechaFin = null)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    string sql = @"
+                        UPDATE Caches
+                        SET Estado = @Estado, Detalle = @Detalle, Informe = @Informe, FechaFin = @FechaFin
+                        WHERE IdCache = @ID";
+
+                    using (var command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", idCache);
+                        command.Parameters.AddWithValue("@Estado", estado);
+                        command.Parameters.AddWithValue("@Detalle", detalle ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Informe", informe ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@FechaFin", FechaFin ?? (object)DBNull.Value);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al actualizar Caches: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+        public static string ObtenerWsInfo()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -307,28 +335,29 @@ namespace CSCache.Controlador
 
         public static void GuardarCache(List<Cache_Peliculas> list, List<Cache_CopiasPelicula> copies, List<Cache_ComplejosGeo> listCompGeo, DateTime fecha)
         {
-            GuardarLog("GuardarCache Inicio", 1004, "DAO.cs");
+            SqlTransaction transaction = null;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                SqlTransaction transaction = null;
+                ActualizarCacheProceso("Peliculas", "En Proceso", 0, "Procesando caché de películas");
 
-                try
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    connection.Open();
                     
+                    connection.Open();
+
                     // Iniciar la transacción
                     transaction = connection.BeginTransaction();
 
                     // Paso 1: Eliminar datos existentes de las tablas
                     string[] tablesToClear = {
-                        "Cache_Actores", "Cache_Directores", "Cache_Funciones", "Cache_GruposSemana",
-                        "Cache_Cinesemanas", "Cache_Salas", "Cache_Tecnologias", "Cache_Peliculas",
-                        "Cache_CopiasPelicula", "Cache_Clasificaciones", "Cache_Generos", "Cache_Lenguajes"
-                    };
+                "Cache_Actores", "Cache_Directores", "Cache_Funciones", "Cache_GruposSemana",
+                "Cache_Cinesemanas", "Cache_Salas", "Cache_Tecnologias", "Cache_Peliculas",
+                "Cache_CopiasPelicula", "Cache_Clasificaciones", "Cache_Generos", "Cache_Lenguajes"
+            };
                     foreach (var table in tablesToClear)
                     {
-                        using (var command = new SqlCommand($"DELETE FROM {table}", connection))
+                        using (var command = new SqlCommand($"DELETE FROM {table}", connection, transaction))
                         {
                             command.ExecuteNonQuery();
                         }
@@ -336,15 +365,15 @@ namespace CSCache.Controlador
                     //Paso 2: Insertar peliculas
                     foreach (Cache_Peliculas peli in list)
                     {
-                        GuardarPelicula(connection, peli);
+                        GuardarPelicula(connection, peli, transaction);
                     }
                     //Paso 3: Insertar copias de la peliculas
                     foreach (var copia in copies)
                     {
                         string insertCopiaSql = @"
-                            INSERT INTO Cache_CopiasPelicula (CodPelicula, CodCopia, IdTecnologia, Titulo, CodIdioma, Subtitulada, Doblada )
-                            VALUES (@CodPelicula, @CodCopia, @IdTecnologia, @Titulo, @CodIdioma, @Subtitulada, @Doblada )";
-                        using (var command = new SqlCommand(insertCopiaSql, connection))
+                    INSERT INTO Cache_CopiasPelicula (CodPelicula, CodCopia, IdTecnologia, Titulo, CodIdioma, Subtitulada, Doblada )
+                    VALUES (@CodPelicula, @CodCopia, @IdTecnologia, @Titulo, @CodIdioma, @Subtitulada, @Doblada )";
+                        using (var command = new SqlCommand(insertCopiaSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@CodPelicula", copia.CodPelicula);
                             command.Parameters.AddWithValue("@CodCopia", copia.CodCopia);
@@ -362,7 +391,7 @@ namespace CSCache.Controlador
                         UPDATE Caches 
                         SET FechaInicio = @Fecha 
                         WHERE IdCache = 'Peliculas'";
-                    using (var command = new SqlCommand(updateCacheSql, connection))
+                    using (var command = new SqlCommand(updateCacheSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@Fecha", fecha);
                         command.ExecuteNonQuery();
@@ -370,65 +399,63 @@ namespace CSCache.Controlador
 
                     // Si todo sale bien, confirmamos la transacción
                     transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    // Si hay un error, deshacemos los cambios
-                    transaction?.Rollback();
-                    GuardarLog("GuardarCache " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
-                    throw ex;
-                }
-            }
-
-            GuardarLog("GuardarCache FIN", 1004, "DAO.cs");
-        }
-
-        private static void GuardarPelicula(SqlConnection connection, Cache_Peliculas peli)
-        {
-            GuardarClasificacion(connection, peli.Cache_Clasificaciones);
-            GuardarGenero(connection, peli.Cache_Generos);
-            GuardarLenguaje(connection, peli.Cache_Lenguajes);
-            GuardarDatosPelicula(connection, peli);
-            GuardarFunciones(connection, peli.Cache_Funciones, peli.CodPelicula);
-        }
-
-        private static void GuardarClasificacion(SqlConnection connection, Cache_Clasificaciones clas)
-        {
-            try
-            {
-                string checkSql = "SELECT COUNT(1) FROM Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
-                bool exist;
-                using (var command = new SqlCommand(checkSql, connection))
-                {
-                    command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion );
-                    exist = (int)command.ExecuteScalar() > 0;
-                }
-
-                if (exist == false)
-                {
-                    string insertSql = "INSERT INTO Cache_Clasificaciones(CodClasificacion, NomClasificacion) VALUES (@CodClasificacion, @NomClasificacion)";
-                    using (var command = new SqlCommand(insertSql, connection))
-                    {
-                        command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion);
-                        command.Parameters.AddWithValue("@NomClasificacion", clas.NomClasificacion);
-                        command.ExecuteNonQuery();
-                    }
+                    ActualizarCacheProceso("Peliculas", "Finalizado", list.Count, "Proceso ejecutado correctamente", DateTime.Now);
                 }
             }
             catch (Exception ex)
             {
-                GuardarLog("GuardarClasificacion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
-                throw ex;
+                transaction?.Rollback();
+                ActualizarCacheProceso("Peliculas", "Iniciado", 0, $"Error en GuardarCache: {ex.Message}", DateTime.Now);
+                throw;
             }
-}
+        }
 
-        private static void GuardarGenero(SqlConnection connection, Cache_Generos gene)
+        private static void GuardarPelicula(SqlConnection connection, Cache_Peliculas peli, SqlTransaction transaction)
+        {
+            GuardarClasificacion(connection, peli.Cache_Clasificaciones, transaction);
+            GuardarGenero(connection, peli.Cache_Generos, transaction);
+            GuardarLenguaje(connection, peli.Cache_Lenguajes, transaction);
+            GuardarDatosPelicula(connection, peli, transaction);
+            GuardarFunciones(connection, peli.Cache_Funciones, peli.CodPelicula, transaction);
+        }
+
+        private static void GuardarClasificacion(SqlConnection connection, Cache_Clasificaciones clas, SqlTransaction transaction)
+        {
+                try
+                {
+                    string checkSql = "SELECT COUNT(1) FROM Cache_Clasificaciones WHERE CodClasificacion = @CodClasificacion";
+                    bool exist;
+                    using (var command = new SqlCommand(checkSql, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion );
+                        exist = (int)command.ExecuteScalar() > 0;
+                    }
+
+                    if (exist == false)
+                    {
+                        string insertSql = "INSERT INTO Cache_Clasificaciones(CodClasificacion, NomClasificacion) VALUES (@CodClasificacion, @NomClasificacion)";
+                        using (var command = new SqlCommand(insertSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@CodClasificacion", clas.CodClasificacion);
+                            command.Parameters.AddWithValue("@NomClasificacion", clas.NomClasificacion);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    GuardarLog("GuardarClasificacion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                    throw ex;
+                }
+            }
+
+        private static void GuardarGenero(SqlConnection connection, Cache_Generos gene, SqlTransaction transaction)
         {
             try
             {
                 string checkSql = "SELECT COUNT(1) FROM Cache_Generos WHERE CodGenero = @CodGenero";
                 bool exist;
-                using (var command = new SqlCommand(checkSql, connection))
+                using (var command = new SqlCommand(checkSql, connection, transaction))
                 {
                     command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
                     exist = (int)command.ExecuteScalar() > 0;
@@ -436,7 +463,7 @@ namespace CSCache.Controlador
                 if (exist == false)
                 {
                     string insertSql = "INSERT INTO Cache_Generos(CodGenero, NomGenero) VALUES (@CodGenero, @NomGenero)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    using (var command = new SqlCommand(insertSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@CodGenero", gene.CodGenero);
                         command.Parameters.AddWithValue("@NomGenero", gene.NomGenero);
@@ -451,13 +478,13 @@ namespace CSCache.Controlador
             }
         }
 
-        private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng)
+        private static void GuardarLenguaje(SqlConnection connection, Cache_Lenguajes leng, SqlTransaction transaction)
         {
             try
             {
                 string checkSql = "SELECT COUNT(1) FROM Cache_Lenguajes WHERE CodLenguaje = @CodLenguaje";
                 bool exist;
-                using (var command = new SqlCommand(checkSql, connection))
+                using (var command = new SqlCommand(checkSql, connection, transaction))
                 {
                     command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
                     exist = (int)command.ExecuteScalar() > 0;
@@ -465,7 +492,7 @@ namespace CSCache.Controlador
                 if (exist == false)
                 {
                     string insertSql = "INSERT INTO Cache_Lenguajes(CodLenguaje, NomLenguaje) VALUES (@CodLenguaje, @NomLenguaje)";
-                    using (var command = new SqlCommand(insertSql, connection))
+                    using (var command = new SqlCommand(insertSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@CodLenguaje", leng.CodLenguaje);
                         command.Parameters.AddWithValue("@NomLenguaje", leng.NomLenguaje);
@@ -480,7 +507,7 @@ namespace CSCache.Controlador
             }
         }
 
-        private static void GuardarDatosPelicula(SqlConnection connection, Cache_Peliculas peli)
+        private static void GuardarDatosPelicula(SqlConnection connection, Cache_Peliculas peli, SqlTransaction transaction)
         {
             try
             {
@@ -494,7 +521,7 @@ namespace CSCache.Controlador
                         @CodClasificacion, @Sinopsis, @SinopsisCorta, @Web1, @Web2, @UrlTrailer, 
                         @CodGenero, @CodLenguaje, @Filename
                     )";
-                using (var command = new SqlCommand(insertSql, connection))
+                using (var command = new SqlCommand(insertSql, connection, transaction))
                 {
                     command.Parameters.AddWithValue("@CodPelicula", peli.CodPelicula);
                     command.Parameters.AddWithValue("@Titulo", peli.Titulo);
@@ -515,8 +542,8 @@ namespace CSCache.Controlador
                     command.ExecuteNonQuery();
                 }
 
-                GuardarActores(connection, peli.CodPelicula, peli.Actores);
-                GuardarDirectores(connection, peli.CodPelicula, peli.Directores);
+                GuardarActores(connection, peli.CodPelicula, peli.Actores, transaction);
+                GuardarDirectores(connection, peli.CodPelicula, peli.Directores, transaction);
             }
             catch (Exception ex)
             {
@@ -525,7 +552,7 @@ namespace CSCache.Controlador
             }
         }
 
-        private static void GuardarActores(SqlConnection connection, int codPelicula, List<string> actores)
+        private static void GuardarActores(SqlConnection connection, int codPelicula, List<string> actores, SqlTransaction transaction)
         {
             try
             {
@@ -535,7 +562,7 @@ namespace CSCache.Controlador
                 bool exist;
                 foreach (string a in actores)
                 {
-                    using (var command = new SqlCommand(checkSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@codPelicula", codPelicula);
                         command.Parameters.AddWithValue("@Actor", a);
@@ -544,7 +571,7 @@ namespace CSCache.Controlador
                     if (exist == false)
                     {
                         string insertSql = "INSERT INTO Cache_Actores(codPelicula, Actor) VALUES (@codPelicula, @Actor)";
-                        using (var command = new SqlCommand(insertSql, connection))
+                        using (var command = new SqlCommand(insertSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@codPelicula", codPelicula);
                             command.Parameters.AddWithValue("@Actor", a);
@@ -560,7 +587,7 @@ namespace CSCache.Controlador
             }
         }
 
-        private static void GuardarDirectores(SqlConnection connection, int codPelicula, List<string> directores)
+        private static void GuardarDirectores(SqlConnection connection, int codPelicula, List<string> directores, SqlTransaction transaction)
         {
             try
             {
@@ -570,7 +597,7 @@ namespace CSCache.Controlador
                 bool exist;
                 foreach (string d in directores)
                 {
-                    using (var command = new SqlCommand(checkSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@codPelicula", codPelicula);
                         command.Parameters.AddWithValue("@Director", d);
@@ -579,7 +606,7 @@ namespace CSCache.Controlador
                     if (exist == false)
                     {
                         string insertSql = "INSERT INTO Cache_Directores(codPelicula, Director) VALUES (@codPelicula, @Director)";
-                        using (var command = new SqlCommand(insertSql, connection))
+                        using (var command = new SqlCommand(insertSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@codPelicula", codPelicula);
                             command.Parameters.AddWithValue("@Director", d);
@@ -595,29 +622,29 @@ namespace CSCache.Controlador
             }
 }
 
-        private static void GuardarFunciones(SqlConnection connection, List<Cache_Funciones> funciones, int codPel)
+        private static void GuardarFunciones(SqlConnection connection, List<Cache_Funciones> funciones, int codPel, SqlTransaction transaction)
         {
             foreach (Cache_Funciones func in funciones)
             {
-                GuardarFuncion(connection, func, codPel);
+                GuardarFuncion(connection, func, codPel, transaction);
             }
         }
 
-        private static void GuardarFuncion(SqlConnection connection, Cache_Funciones func, int codPel)
+        private static void GuardarFuncion(SqlConnection connection, Cache_Funciones func, int codPel, SqlTransaction transaction)
         {
-            GuardarTecnologia(connection, func.Cache_Tecnologias);
-            GuardarCineSemana(connection, func.Complex_Options);
-            GuardarDatosFuncion(connection, func, codPel);
+            GuardarTecnologia(connection, func.Cache_Tecnologias, transaction);
+            GuardarCineSemana(connection, func.Complex_Options, transaction);
+            GuardarDatosFuncion(connection, func, codPel, transaction);
         }
 
-        private static void GuardarTecnologia(SqlConnection connection, Cache_Tecnologias tecn)
+        private static void GuardarTecnologia(SqlConnection connection, Cache_Tecnologias tecn, SqlTransaction transaction)
         {
             try
             {
                 string checkSql = "SELECT COUNT(1) FROM Cache_Tecnologias WHERE CodTecnologia = @CodTecnologia ";
                 bool exist;
             
-                    using (var command = new SqlCommand(checkSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
                         exist = (int)command.ExecuteScalar() > 0;
@@ -625,7 +652,7 @@ namespace CSCache.Controlador
                     if (exist == false)
                     {
                         string insertSql = "INSERT INTO Cache_Tecnologias(CodTecnologia, NomTecnologia) VALUES (@CodTecnologia, @NomTecnologia)";
-                        using (var command = new SqlCommand(insertSql, connection))
+                        using (var command = new SqlCommand(insertSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@CodTecnologia", tecn.CodTecnologia);
                             command.Parameters.AddWithValue("@NomTecnologia", tecn.NomTecnologia);
@@ -640,7 +667,7 @@ namespace CSCache.Controlador
             }
         }
 
-        private static void GuardarCineSemana(SqlConnection connection, Complex_Options comp)
+        private static void GuardarCineSemana(SqlConnection connection, Complex_Options comp, SqlTransaction transaction)
         {
             try
             {
@@ -649,7 +676,7 @@ namespace CSCache.Controlador
                     string checkSql = "SELECT COUNT(1) FROM Cache_Cinesemanas WHERE CodComplejo = @CodComplejo ";
                     bool exist;
                 
-                    using (var command = new SqlCommand(checkSql, connection))
+                    using (var command = new SqlCommand(checkSql, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
                         exist = (int)command.ExecuteScalar() > 0;
@@ -657,7 +684,7 @@ namespace CSCache.Controlador
                     if (exist == false)
                     {
                         string insertSql = "INSERT INTO Cache_Cinesemanas(CodComplejo, Desde, Hasta) VALUES (@CodComplejo, @Desde, @Hasta)";
-                        using (var command = new SqlCommand(insertSql, connection))
+                        using (var command = new SqlCommand(insertSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
                             command.Parameters.AddWithValue("@Desde", comp.Cache_Cinesemanas.Desde);
@@ -673,7 +700,7 @@ namespace CSCache.Controlador
                             FROM Cache_GruposSemana
                             WHERE Orden = @Orden AND CodComplejo = @CodComplejo";
 
-                        using (var checkCommand = new SqlCommand(checkExistsSql, connection))
+                        using (var checkCommand = new SqlCommand(checkExistsSql, connection, transaction))
                         {
                             checkCommand.Parameters.AddWithValue("@Orden", grupo.Orden);
                             checkCommand.Parameters.AddWithValue("@CodComplejo", comp.CodComplejo);
@@ -686,7 +713,7 @@ namespace CSCache.Controlador
                                     INSERT INTO Cache_GruposSemana (NomGrupo, Orden, Desde, Hasta, CodComplejo)
                                     VALUES (@NomGrupo, @Orden, @Desde, @Hasta, @CodComplejo)";
 
-                                using (var insertCommand = new SqlCommand(insertCopiaSql, connection))
+                                using (var insertCommand = new SqlCommand(insertCopiaSql, connection, transaction))
                                 {
                                     insertCommand.Parameters.AddWithValue("@NomGrupo", grupo.NomGrupo);
                                     insertCommand.Parameters.AddWithValue("@Orden", grupo.Orden);
@@ -702,7 +729,7 @@ namespace CSCache.Controlador
 
                     foreach (Cache_Salas sala in comp.Cache_Salas)
                     {
-                        GuardarSala(connection, sala, comp.CodComplejo);
+                        GuardarSala(connection, sala, comp.CodComplejo, transaction);
                     }
                 }
             }
@@ -712,16 +739,13 @@ namespace CSCache.Controlador
                 throw ex;
             }
 }
-
-           
         
-        
-        private static void GuardarSala(SqlConnection connection, Cache_Salas sala, int codComp)
+        private static void GuardarSala(SqlConnection connection, Cache_Salas sala, int codComp, SqlTransaction transaction)
         {
             try
             {
                 string checkSql = "SELECT COUNT(1) FROM Cache_Salas WHERE CodSala = @CodSala AND CodComplejo = @CodComplejo";
-                using (var checkCommand = new SqlCommand(checkSql, connection))
+                using (var checkCommand = new SqlCommand(checkSql, connection, transaction))
                 {
                     checkCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
                     checkCommand.Parameters.AddWithValue("@CodComplejo", codComp);
@@ -733,7 +757,7 @@ namespace CSCache.Controlador
                         string insertSql = @"
                     INSERT INTO Cache_Salas (CodSala, NomSala, CodTipoSala, NomTipoSala, CodComplejo)
                     VALUES (@CodSala, @NomSala, @CodTipoSala, @NomTipoSala, @CodComplejo)";
-                        using (var insertCommand = new SqlCommand(insertSql, connection))
+                        using (var insertCommand = new SqlCommand(insertSql, connection, transaction))
                         {
                             insertCommand.Parameters.AddWithValue("@CodSala", sala.CodSala);
                             insertCommand.Parameters.AddWithValue("@NomSala", sala.NomSala);
@@ -753,60 +777,60 @@ namespace CSCache.Controlador
             }
 }
 
-    private static void GuardarDatosFuncion(SqlConnection connection, Cache_Funciones func, int codPel)
-    {
-            try
-            {
-                func.CodComplejo = func.Complex_Options.CodComplejo;
-                func.CodSala = func.Cache_Salas.CodSala;
-                func.CodTecnologia = func.Cache_Tecnologias.CodTecnologia;
-                func.CodPelicula = codPel;
-
-                string sql = @"
-                    INSERT INTO Cache_Funciones (
-                        CodFuncion, CodComplejo, HoraComienzo, Vuelta, Estado, Preestreno, 
-                        ButacasDisponibles, ButacasHabilitadas, CodDistribucion, Fecha, 
-                        CodSala, CodTecnologia, CodPelicula, CodCopia
-                    )
-                    VALUES (
-                        @CodFuncion, @CodComplejo, @HoraComienzo, @Vuelta, @Estado, @Preestreno, 
-                        @ButacasDisponibles, @ButacasHabilitadas, @CodDistribucion, @Fecha, 
-                        @CodSala, @CodTecnologia, @CodPelicula, @CodCopia
-                    )";
-                using (var command = new SqlCommand(sql, connection))
+        private static void GuardarDatosFuncion(SqlConnection connection, Cache_Funciones func, int codPel, SqlTransaction transaction)
+        {
+                try
                 {
-                    command.Parameters.AddWithValue("@CodFuncion", func.CodFuncion);
-                    command.Parameters.AddWithValue("@CodComplejo", func.CodComplejo);
-                    command.Parameters.AddWithValue("@HoraComienzo", func.HoraComienzo ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Vuelta", func.Vuelta);
-                    command.Parameters.AddWithValue("@Estado", func.Estado ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Preestreno", func.Preestreno);
-                    command.Parameters.AddWithValue("@ButacasDisponibles", func.ButacasDisponibles);
-                    command.Parameters.AddWithValue("@ButacasHabilitadas", func.ButacasHabilitadas);
-                    command.Parameters.AddWithValue("@CodDistribucion", func.CodDistribucion);
-                    command.Parameters.AddWithValue("@Fecha", func.Fecha);
-                    command.Parameters.AddWithValue("@CodSala", func.CodSala);
-                    command.Parameters.AddWithValue("@CodTecnologia", func.CodTecnologia);
-                    command.Parameters.AddWithValue("@CodPelicula", func.CodPelicula);
-                    command.Parameters.AddWithValue("@CodCopia", func.CodCopia ?? (object)DBNull.Value);
+                    func.CodComplejo = func.Complex_Options.CodComplejo;
+                    func.CodSala = func.Cache_Salas.CodSala;
+                    func.CodTecnologia = func.Cache_Tecnologias.CodTecnologia;
+                    func.CodPelicula = codPel;
 
-                    command.ExecuteNonQuery();
+                    string sql = @"
+                        INSERT INTO Cache_Funciones (
+                            CodFuncion, CodComplejo, HoraComienzo, Vuelta, Estado, Preestreno, 
+                            ButacasDisponibles, ButacasHabilitadas, CodDistribucion, Fecha, 
+                            CodSala, CodTecnologia, CodPelicula, CodCopia
+                        )
+                        VALUES (
+                            @CodFuncion, @CodComplejo, @HoraComienzo, @Vuelta, @Estado, @Preestreno, 
+                            @ButacasDisponibles, @ButacasHabilitadas, @CodDistribucion, @Fecha, 
+                            @CodSala, @CodTecnologia, @CodPelicula, @CodCopia
+                        )";
+                    using (var command = new SqlCommand(sql, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@CodFuncion", func.CodFuncion);
+                        command.Parameters.AddWithValue("@CodComplejo", func.CodComplejo);
+                        command.Parameters.AddWithValue("@HoraComienzo", func.HoraComienzo ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Vuelta", func.Vuelta);
+                        command.Parameters.AddWithValue("@Estado", func.Estado ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Preestreno", func.Preestreno);
+                        command.Parameters.AddWithValue("@ButacasDisponibles", func.ButacasDisponibles);
+                        command.Parameters.AddWithValue("@ButacasHabilitadas", func.ButacasHabilitadas);
+                        command.Parameters.AddWithValue("@CodDistribucion", func.CodDistribucion);
+                        command.Parameters.AddWithValue("@Fecha", func.Fecha);
+                        command.Parameters.AddWithValue("@CodSala", func.CodSala);
+                        command.Parameters.AddWithValue("@CodTecnologia", func.CodTecnologia);
+                        command.Parameters.AddWithValue("@CodPelicula", func.CodPelicula);
+                        command.Parameters.AddWithValue("@CodCopia", func.CodCopia ?? (object)DBNull.Value);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    GuardarLog("GuardarDatosFuncion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
+                    throw ex;
                 }
             }
-            catch (Exception ex)
-            {
-                GuardarLog("GuardarDatosFuncion" + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
-                throw ex;
-            }
-        }
 
         public static void GuardarCacheProductos(List<Cache_Productos> list, DateTime fecha)
         {
-            GuardarLog("GuardarCacheProductos Inicio list.Count: " + list.Count, 1002, "DAO.cs");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                try
+                ActualizarCacheProceso("Productos", "En Proceso", 0, "Procesando caché de productos");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
@@ -814,50 +838,30 @@ namespace CSCache.Controlador
                     {
                         command.ExecuteNonQuery();
                     }
-                        string sql = @"
-                    INSERT INTO Cache_Productos (
-                        CodProducto, CodComplejo, NomProducto, Precio, Posicion, NombreArchivo)
-                    VALUES (
-                        @CodProducto, @CodComplejo, @NomProducto, @Precio, @Posicion, @NombreArchivo
-                    )";
-                    foreach (var lista in list)
-                    {
-                        using (var command = new SqlCommand(sql, connection))
-                        {
-                            command.Parameters.AddWithValue("@CodProducto", lista.CodProducto);
-                            command.Parameters.AddWithValue("@CodComplejo", lista.CodComplejo);
-                            command.Parameters.AddWithValue("@NomProducto", lista.NomProducto);
-                            command.Parameters.AddWithValue("@Precio", lista.Precio ?? (object)DBNull.Value);
-                            command.Parameters.AddWithValue("@Posicion", lista.Posicion);
-                            command.Parameters.AddWithValue("@NombreArchivo", lista.NombreArchivo); ;
 
-                            command.ExecuteNonQuery();
-                        }
-                    }
-
-                    foreach (Cache_Productos prod in list)
+                    foreach (var prod in list)
                     {
                         GuardarProducto(connection, prod);
                     }
 
                     string updateCacheSql = @"
-                        UPDATE Caches 
-                        SET FechaInicio = @Fecha 
-                        WHERE IdCache = 'Productos'";
+                UPDATE Caches 
+                SET FechaInicio = @Fecha 
+                WHERE IdCache = 'Productos'";
                     using (var command = new SqlCommand(updateCacheSql, connection))
                     {
                         command.Parameters.AddWithValue("@Fecha", fecha);
                         command.ExecuteNonQuery();
                     }
-                }
-                catch (Exception ex)
-                {
-                    GuardarLog("GuardarCacheProductos 2 " + ex.ToString() + ex.StackTrace, 1002, "DAO.cs");
-                    throw ex;
+
+                    ActualizarCacheProceso("Productos", "Finalizado", list.Count, "Proceso ejecutado correctamente", DateTime.Now);
                 }
             }
-
-            GuardarLog("GuardarCacheProductos Fin", 1002, "DAO.cs");
+            catch (Exception ex)
+            {
+                ActualizarCacheProceso("Productos", "Iniciado", 0, $"Error en GuardarCacheProductos: {ex.Message}", DateTime.Now);
+                throw;
+            }
         }
 
         private static void GuardarProducto(SqlConnection connection, Cache_Productos prod)
