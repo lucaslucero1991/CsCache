@@ -8,7 +8,7 @@ namespace CSCache.Controlador
 {
     public class DAO : IDisposable
     {
-        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["CMS_AtlasConnection"].ConnectionString;
+        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["CsBaseConnection"].ConnectionString;
         private readonly SqlConnection _sharedConnection;
 
         public DAO()
