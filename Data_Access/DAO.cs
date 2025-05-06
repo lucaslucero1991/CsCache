@@ -257,7 +257,8 @@ namespace CSCache.Controlador
                 {
                     connection.Open();
                     List<DeviceImageSettings> dispositivos = new List<DeviceImageSettings>();
-                    string sql = "SELECT Id, ImageTypeCode, DesktopWidth, TabletWidth, SmartphoneWidth, CellphoneWidth";
+                    string sql = "SELECT Id, ImageTypeCode, DesktopWidth, TabletWidth, SmartphoneWidth, CellphoneWidth"+
+                        " from DeviceImageSettings";
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
